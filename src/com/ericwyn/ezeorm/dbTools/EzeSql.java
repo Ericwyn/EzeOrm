@@ -20,6 +20,7 @@ public class EzeSql {
     //共用的statement
     private Statement statement=null;
 
+
     public EzeSql(){
 
     }
@@ -58,8 +59,12 @@ public class EzeSql {
         this.statement = statement;
     }
 
-    public void aa(){
-
+    public void runSQL(String sql) {
+        try {
+            statement.execute(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 

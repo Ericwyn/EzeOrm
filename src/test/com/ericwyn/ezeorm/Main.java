@@ -1,6 +1,7 @@
 package test.com.ericwyn.ezeorm;
 
-import com.ericwyn.ezeorm.EzeDdServerBuilder;
+
+import com.ericwyn.ezeorm.EzeDbServer;
 
 import test.com.ericwyn.ezeorm.entity.User;
 
@@ -9,9 +10,9 @@ import test.com.ericwyn.ezeorm.entity.User;
  */
 public class Main {
     public static void main(String[] args) throws Exception{
-        EzeDdServerBuilder.EzeDdServer userServer=new EzeDdServerBuilder()
-                .setClass(User.class)
-                .build();
-        System.out.println(userServer);
+        EzeDbServer.Builder builder=new EzeDbServer.Builder();
+        builder.setEntityClass(User.class);
+        EzeDbServer userServer = builder.create();
+
     }
 }
