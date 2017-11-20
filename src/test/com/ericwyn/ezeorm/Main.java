@@ -1,6 +1,6 @@
 package test.com.ericwyn.ezeorm;
 
-import com.ericwyn.ezeorm.EzeDBBuilder;
+import com.ericwyn.ezeorm.EzeDdServerBuilder;
 
 import test.com.ericwyn.ezeorm.entity.User;
 
@@ -9,8 +9,7 @@ import test.com.ericwyn.ezeorm.entity.User;
  */
 public class Main {
     public static void main(String[] args) throws Exception{
-        EzeDBBuilder.EzeDB userServer=new EzeDBBuilder()
-                .url("aaa")
+        EzeDdServerBuilder.EzeDdServer userServer=new EzeDdServerBuilder()
                 .setClass(User.class)
                 .build();
         System.out.println(userServer);

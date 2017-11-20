@@ -8,7 +8,7 @@ import java.util.List;
 public class TableObj {
     private String tableName;
     List<ColumnObj> columns;
-
+    private String primaryKey;
     public TableObj() {
 
     }
@@ -36,5 +36,13 @@ public class TableObj {
 
     public void setColumns(List<ColumnObj> columns) {
         this.columns = columns;
+    }
+
+    public String getPrimaryKey() {
+        return primaryKey;
+    }
+
+    public void setPrimaryKey(String primaryKey) {
+        this.primaryKey = primaryKey;
     }
 }

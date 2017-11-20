@@ -1,5 +1,7 @@
 package com.ericwyn.ezeorm.tool;
 
+import com.ericwyn.ezeorm.annotation.AutoIncrement;
+import com.ericwyn.ezeorm.annotation.PrimaryKey;
 import com.ericwyn.ezeorm.expection.EzeExpection;
 import com.ericwyn.ezeorm.annotation.Column;
 import com.ericwyn.ezeorm.annotation.Entity;
@@ -16,6 +18,7 @@ import test.com.ericwyn.ezeorm.entity.User;
  * Created by Ericwyn on 17-11-20.
  */
 public class ParseTools {
+
     /**
      * 解析注解的工具
      * @param cla   映射对象
@@ -43,13 +46,32 @@ public class ParseTools {
             Field[] fields = classA.getDeclaredFields();
             for (Field field:fields){
                 Annotation[] annotationsOfField=field.getAnnotations();
+                ColumnObj columnObj=new ColumnObj();
+                boolean isColumn=false;
+
                 for (Annotation annotation:annotationsOfField){
                     if (annotation instanceof Column){
-                        isEntity=true;
                         Column column=(Column) annotation;
-                        columns.add(new ColumnObj(column.name(),column.type().name(),column.notNull()));
+                        isColumn=true;
+                        columnObj.setName(column.name());
+                        columnObj.setNotNull(column.notNull());
+                        columnObj.setType(column.type().toString());
+                    }
+                    if(annotation instanceof PrimaryKey){
+                        PrimaryKey primaryKey=(PrimaryKey)annotation;
+                        tableObj.setPrimaryKey(field.getName());
+                    }
+                    if(annotation instanceof AutoIncrement){
+                        AutoIncrement autoIncrement=(AutoIncrement)annotation;
+                        columnObj.setAutoIncrement(true);
                     }
                 }
+
+                if(isColumn){
+                    //只有确认了这个是参数才会添加
+                    columns.add(columnObj);
+                }
+
             }
             tableObj.setColumns(columns);
             return tableObj;
@@ -57,9 +79,9 @@ public class ParseTools {
     }
 
     public static void main(String[] args) throws Exception {
-//        Use admin=new Admin();
-//        User user=new User();
+
         TableObj tableObj =parseEntity(User.class);
         System.out.println(tableObj);
+
     }
 }

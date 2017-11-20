@@ -6,12 +6,12 @@ package com.ericwyn.ezeorm.obj;
 public class ColumnObj {
     private String name;
     private String type;
-    private boolean notNull ;
+    private boolean notNull ;       //是否非空
+    private boolean autoIncrement;  //是否自动递增
 
-    public ColumnObj(String name, String type, boolean notNull) {
-        this.name = name;
-        this.type = type;
-        this.notNull = notNull;
+    public ColumnObj() {
+        notNull=false;
+        autoIncrement=false;
     }
 
     public String getName() {
@@ -36,5 +36,13 @@ public class ColumnObj {
 
     public void setNotNull(boolean notNull) {
         this.notNull = notNull;
+    }
+
+    public boolean isAutoIncrement() {
+        return autoIncrement;
+    }
+
+    public void setAutoIncrement(boolean autoIncrement) {
+        this.autoIncrement = autoIncrement;
     }
 }
