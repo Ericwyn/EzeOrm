@@ -8,7 +8,47 @@ EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象
 ## 项目依赖
  - [ConfigGet工具](https://github.com/Ericwyn/JavaUtil/blob/master/src/ConfigGet/README.md)
   
-# 使用
+# 使用示例
+### 创建Entity实体类
+
+    import com.ericwyn.ezeorm.annotation.AutoIncrement;
+    import com.ericwyn.ezeorm.annotation.Column;
+    import com.ericwyn.ezeorm.annotation.ColumnType;
+    import com.ericwyn.ezeorm.annotation.Entity;
+    import com.ericwyn.ezeorm.annotation.PrimaryKey;
+    
+    import java.util.Date;
+    
+    
+    /**
+     *
+     * user的实体类
+     * Created by Ericwyn on 17-11-20.
+     */
+    @Entity(table = "user")
+    public class User {
+    
+        @PrimaryKey
+        @AutoIncrement
+        @Column(name = "id",type = ColumnType.INT)
+        private Long id;
+    
+        @Column(name = "name",type = ColumnType.TEXT,notNull = true)
+        private String name;
+    
+        @Column(name = "age",type = ColumnType.INT,notNull = true)
+        private int age;
+    
+        @Column(name = "sex",type = ColumnType.TEXT,notNull = true)
+        private String sex;
+    
+        @Column(name = "registerDate",type = ColumnType.DATE,notNull = true)
+        private Date date;
+    
+    }
+
+### 创建EzeDbServer并使用
+
     import com.ericwyn.ezeorm.EzeDbServer;
     
     import test.entity.User;
@@ -27,7 +67,7 @@ EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象
         }
     }
 
-# 对象关系映射表
+## 对象关系映射表
 ### **mysql**里的映射
     
 |    java 类型    | mysql 类型 |
