@@ -9,11 +9,23 @@ EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象
  - [ConfigGet工具](https://github.com/Ericwyn/JavaUtil/blob/master/src/ConfigGet/README.md)
   
 # 使用
-    EzeDBBuilder.EzeDB userServer=new EzeDBBuilder()
-                .url("aaa")
-                .setClass(User.class)
-                .build();
-    System.out.println(userServer);
+    import com.ericwyn.ezeorm.EzeDbServer;
+    
+    import test.entity.User;
+    
+    public class Main {
+        public static void main(String[] args) throws Exception{
+            
+            EzeDbServer.Builder builder=new EzeDbServer.Builder();
+            builder.setEntityClass(User.class);
+            EzeDbServer userServer = builder.create();
+            
+            //后续的增删改查操作
+            //userServer.insert();
+            //userServer.delete();
+            //......
+        }
+    }
 
 # 对象关系映射表
 ### **mysql**里的映射

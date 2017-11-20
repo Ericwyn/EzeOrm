@@ -13,6 +13,5 @@ public class Main {
         EzeDbServer.Builder builder=new EzeDbServer.Builder();
         builder.setEntityClass(User.class);
         EzeDbServer userServer = builder.create();
-
     }
 }
