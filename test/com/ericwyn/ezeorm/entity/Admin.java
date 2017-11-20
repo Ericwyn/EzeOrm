@@ -1,4 +1,4 @@
-package test.com.ericwyn.ezeorm.entity;
+package com.ericwyn.ezeorm.entity;
 
 import com.ericwyn.ezeorm.annotation.AutoIncrement;
 import com.ericwyn.ezeorm.annotation.Column;

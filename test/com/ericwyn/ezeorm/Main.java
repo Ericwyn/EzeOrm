@@ -1,9 +1,9 @@
-package test.com.ericwyn.ezeorm;
-
+package com.ericwyn.ezeorm;
 
 import com.ericwyn.ezeorm.EzeDbServer;
+import com.ericwyn.ezeorm.entity.User;
 
-import test.com.ericwyn.ezeorm.entity.User;
+import com.ericwyn.ezeorm.entity.User;
 
 /**
  * Created by Ericwyn on 17-11-20.
