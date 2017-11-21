@@ -1,5 +1,8 @@
 package com.ericwyn.ezeorm.obj;
 
+
+import java.util.List;
+
 /**
  * Created by Ericwyn on 17-11-20.
  */
@@ -45,4 +48,63 @@ public class ColumnObj {
     public void setAutoIncrement(boolean autoIncrement) {
         this.autoIncrement = autoIncrement;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(((ColumnObj) obj).getName().equals(this.getName())){
+            if(((ColumnObj) obj).getType().equals(this.getType())){
+                if(((ColumnObj) obj).isNotNull()==this.isNotNull()){
+                    if (((ColumnObj) obj).isAutoIncrement()==this.isAutoIncrement()){
+                        return true;
+                    }else {
+                        return false;
+                    }
+                }else {
+                    return false;
+                }
+            }else {
+                return false;
+            }
+        }else {
+            return false;
+        }
+
+    }
+
+//    /**
+//     * 判断这个属性是不是在另一个表里也存在
+//     *
+//     * @param table
+//     * @return
+//     */
+//    public boolean inAnotherTable(TableObj table){
+//        List<ColumnObj> columns = table.getColumns();
+//        boolean resFlag=false;
+//        for (ColumnObj columnObj:table.getColumns()){
+//            if(this.getName().equals(columnObj.getName())){
+//                if(this.getType().equals(columnObj.getType())){
+//                    if(this.isNotNull()==columnObj.isNotNull()){
+//                        if(this.isAutoIncrement()==columnObj.isAutoIncrement()){
+//                            resFlag=true;
+//                            break;
+//                        }else {
+//                            System.out.println("列非空不同");
+//                            resFlag=false;
+//                        }
+//                    }else {
+//                        System.out.println("列自增加不同");
+//                        resFlag=false;
+//                    }
+//                }else {
+//                    System.out.println("列类型不同");
+//                    resFlag=false;
+//                }
+//            }else {
+//                System.out.println("列名字不同");
+//                resFlag=false;
+//            }
+//        }
+//        return resFlag;
+//    }
+
 }

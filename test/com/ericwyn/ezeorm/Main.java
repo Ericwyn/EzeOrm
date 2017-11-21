@@ -1,8 +1,5 @@
 package com.ericwyn.ezeorm;
 
-import com.ericwyn.ezeorm.EzeDbServer;
-import com.ericwyn.ezeorm.entity.User;
-
 import com.ericwyn.ezeorm.entity.User;
 
 /**
