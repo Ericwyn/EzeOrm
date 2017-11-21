@@ -44,6 +44,12 @@ EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象
     
         @Column(name = "registerDate",type = ColumnType.DATE,notNull = true)
         private Date date;
+        
+        public User() {
+                
+        }
+        
+        //省略的Getter 和 Setter 方法
     
     }
 
