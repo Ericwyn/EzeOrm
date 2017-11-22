@@ -6,18 +6,27 @@ import com.ericwyn.ezeorm.expection.EzeExpection;
 import com.ericwyn.ezeorm.obj.ColumnObj;
 import com.ericwyn.ezeorm.obj.TableObj;
 import com.ericwyn.ezeorm.tool.ParseTools;
+import com.sun.deploy.util.ReflectionUtil;
 
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * orm类
  *
+ * q:因为对通过T获取T.class 尝试的失败，所以builder 限定了一定要通过setEntityClass 传入一个entityClass 参数
+ * 如果后期能够获取到T.class 的话就可以把这个方法去掉了
+ *
  * Created by Ericwyn on 17-11-20.
  */
-public class EzeDbServer {
+public class EzeDbServer<T> {
+//    private T object;
     private Class entityClass;
     private EzeSql ezeSql;
     private Connection connection;
@@ -25,19 +34,35 @@ public class EzeDbServer {
     private TableObj table;
 
 
-    public static class Builder{
+    public static class Builder<T>{
         private Class entityClass;
 
         public Builder(){
-
+//            this.entityClass=getTClass();
         }
-        public Builder setEntityClass(Class tableClass){
-            this.entityClass =tableClass;
+
+        //因为无法通过反射获取T.class 所以需要再加上一个 setEntityClass 的方法
+        public Builder<T> setEntityClass(Class<T> entityClass){
+            this.entityClass=entityClass;
             return this;
         }
 
-        public EzeDbServer create(){
-            return new EzeDbServer(this);
+
+        private Class<T> getTClass(){
+            Class<T> tClass = (Class<T>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+            return tClass;
+        }
+        EzeDbServer<T> create(){
+            if(this.entityClass==null){
+                try {
+                    throw new EzeExpection("Builder 没有设定对象实体类，请调用 Builder.setEntityClass() 方法进行设置");
+                }catch (EzeExpection e){
+                    e.printStackTrace();
+                }
+                return null;
+            }else {
+                return new EzeDbServer<>(this);
+            }
         }
 
     }
@@ -147,10 +172,12 @@ public class EzeDbServer {
     }
 
     /**
+     *  更新表的结构
+     *  update the table structure
      *
      * @param table
      */
-    private void updateTable(TableObj table){
+    private void updateTableStruc(TableObj table){
         System.out.println("表格更新");
         //所有的表格更新都采用同一种方式，参考spring.jpa.properties.hibernate.hbm2ddl.auto 属性
         //与spring.jpa.properties.hibernate.hbm2ddl.auto 的 update模式相同
@@ -178,12 +205,12 @@ public class EzeDbServer {
      * @param table
      * @return
      */
-    public void initTable(TableObj table){
+    private void initTable(TableObj table){
         //判断表是否存在
         if(isTableCreate(table)){
-            //已经存在，判断是否改变
+            //已经存在，判断是否改变,如果改变的话 ，更新表结构
             if(isTableChange(table)){
-
+                updateTableStruc(table);
             }
         }else {
             //不存在
@@ -191,12 +218,30 @@ public class EzeDbServer {
         }
     }
 
-    public void add(){
+    public void findAll(){
 
     }
-    public void delete(){
+
+    public List<T> findByAttributes(String... attributes){
+        return null;
+    }
+
+    public void insert(T t){
+        ezeSql.runSQL(coderBuilder.insert(table,t));
+    }
+
+    public void insertList(List<T> list){
 
     }
+
+    public void delete(T t){
+
+    }
+
+    public void deleteByAttributes(String... attributes){
+
+    }
+
 
 
 }

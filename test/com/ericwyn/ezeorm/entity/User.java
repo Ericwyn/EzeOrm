@@ -19,20 +19,20 @@ public class User {
 
     @PrimaryKey
     @AutoIncrement
-    @Column(name = "id",type = ColumnType.INT)
+    @Column(type = ColumnType.INT)
     private Long id;
 
-    @Column(name = "name",type = ColumnType.TEXT,notNull = true)
+    @Column(type = ColumnType.TEXT,notNull = true)
     private String name;
 
-    @Column(name = "age",type = ColumnType.INT,notNull = true)
+    @Column(type = ColumnType.INT,notNull = true)
     private int age;
 
-    @Column(name = "sex",type = ColumnType.TEXT,notNull = true)
+    @Column(type = ColumnType.TEXT,notNull = true)
     private String sex;
 
-    @Column(name = "registerDate",type = ColumnType.DATE,notNull = true)
-    private Date date;
+    @Column(type = ColumnType.DATE,notNull = true)
+    private Date registerDate;
 
     public User() {
 
@@ -71,10 +71,10 @@ public class User {
     }
 
     public Date getDate() {
-        return date;
+        return registerDate;
     }
 
     public void setDate(Date date) {
-        this.date = date;
+        this.registerDate = date;
     }
 }

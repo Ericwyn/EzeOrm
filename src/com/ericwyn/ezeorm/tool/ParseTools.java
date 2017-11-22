@@ -63,7 +63,24 @@ public class ParseTools {
                         if (annotation instanceof Column){
                             Column column=(Column) annotation;
                             isColumn=true;
-                            columnObj.setName(column.name());
+                            String fieldNameTemp=field.getName();
+                            //分割驼峰命名法
+                            //通过统一的逻辑由类属性名称获取字段的命名。
+//                            columnObj.setName(column.name());
+                            String[] r = fieldNameTemp.split("(?=[A-Z])");
+                            if(r.length==0){
+                                columnObj.setName(r[0].toLowerCase());
+                            }else {
+                                String temp="";
+                                for (int i=0;i<r.length;i++){
+                                    if (i!=r.length-1){
+                                        temp+=r[i].toLowerCase()+"_";
+                                    }else {
+                                        temp+=r[i].toLowerCase();
+                                    }
+                                }
+                                columnObj.setName(temp);
+                            }
                             columnObj.setNotNull(column.notNull());
                             columnObj.setType(column.type().toString());
                         }

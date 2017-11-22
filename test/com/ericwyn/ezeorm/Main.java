@@ -7,8 +7,11 @@ import com.ericwyn.ezeorm.entity.User;
  */
 public class Main {
     public static void main(String[] args) throws Exception{
-        EzeDbServer.Builder builder=new EzeDbServer.Builder();
+
+        EzeDbServer.Builder<User> builder=new EzeDbServer.Builder<>();
         builder.setEntityClass(User.class);
-        EzeDbServer userServer = builder.create();
+        EzeDbServer<User> userServer = builder.create();
+
+//        userServer.insert(new User());
     }
 }

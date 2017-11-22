@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface Column {
-    String name();  //列的名字
+//    String name();  //列的名字
     ColumnType type() ;//default ColumnType.TEXT; //列的类型
     boolean notNull() default false;
 

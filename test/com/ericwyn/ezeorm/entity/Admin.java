@@ -17,7 +17,7 @@ public class Admin {
     @AutoIncrement
     private Long id;
 
-    @Column(name = "name",type = ColumnType.TEXT)
+    @Column(type = ColumnType.TEXT)
     private String name;
 
     public Admin() {
