@@ -11,6 +11,7 @@ import com.ericwyn.ezeorm.obj.TableObj;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 
@@ -18,6 +19,8 @@ import java.util.ArrayList;
  * Created by Ericwyn on 17-11-20.
  */
 public class ParseTools {
+
+    public static final SimpleDateFormat sdfForDATATIME=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     /**
      * 解析注解的工具

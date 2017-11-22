@@ -15,7 +15,8 @@ package com.ericwyn.ezeorm.annotation;
 public enum ColumnType {
     INT,
     BIGINT,
-    DATE,
+    DATETIME,
     DOUBLE,
     TEXT,
+    BOOLEAN,
 }

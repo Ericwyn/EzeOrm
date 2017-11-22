@@ -8,6 +8,10 @@ import com.ericwyn.ezeorm.obj.TableObj;
 import com.ericwyn.ezeorm.tool.ParseTools;
 import com.sun.deploy.util.ReflectionUtil;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.sql.Connection;
@@ -15,6 +19,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -218,8 +223,78 @@ public class EzeDbServer<T> {
         }
     }
 
-    public void findAll(){
+    public List<T> findAll(){
+        List<T> list;
+        ResultSet resultSet = ezeSql.runSQLForRes(coderBuilder.findAll(table));
+        if(resultSet!=null){
+            try {
+                Class clazz =entityClass;
+                Object object = clazz.newInstance();
 
+                Method[] methods = clazz.getMethods();
+                List<ColumnObj> columns = table.getColumns();
+                Field[] fields=clazz.getFields();
+                //获取每一列
+                if(resultSet.next()){
+                    //通过字段名字解析每一列
+                    //遍历所有的字段，取得字段的名字
+                    for (ColumnObj columnObj:columns){
+                        switch (columnObj.getType()){
+                            //通过类型来获取变量，而后将变量塞到对应的object里面，再把object塞到list里面！！！！！！！！！！！就是这样的
+                            case "INT":
+                                int resGetInt=resultSet.getInt(columnObj.getName());
+
+
+                            case "DOUBLE":
+                                double resGetDouble=resultSet.getDouble(columnObj.getName());
+
+                            case "BIGINT":
+                                Long resGetBigint=resultSet.getLong(columnObj.getName());
+
+//                                String strTemp = resultSet.getString(columnObj.getName());
+//                                if(strTemp ==null){
+//                                    if (columnObj.isNotNull()){
+//                                        throw new EzeExpection("该非空字段无法从数据库中获取");
+//                                    }
+//                                }else {
+//                                    //找出与其同名的属性，然后创建这样的一个属性，塞到创建的object中
+//                                    for (Field field:fields){
+//                                        if (field.getName().toLowerCase().equals(columnObj.getName().replaceAll("_",""))){
+//                                            field.getType().newInstance();
+//                                        }
+//                                    }
+//                                    Long resGet=resultSet.getLong(columnObj.getName())
+//
+//
+//                                }
+//                                valueBuilder.append(invoke.toString() + ", ");
+                                break;
+                            case "TEXT":
+                                String resGetText=resultSet.getString(columnObj.getName());
+
+//                                valueBuilder.append("\"" + invoke.toString() + "\", ");
+                                break;
+                            case "DATETIME":
+                                String resGetDatetime=resultSet.getString(columnObj.getName());
+//                                if (invoke instanceof Date) {
+//                                    valueBuilder.append("\"" + ParseTools.sdfForDATATIME.format((Date) invoke) + "\", ");
+//                                } else {
+//                                    throw new EzeExpection(columnObj.getName() + "字段 java 时间格式错误，请使用 java.util.Date()");
+//                                }
+                                break;
+                        }
+
+
+                    }
+
+                }
+            } catch (SQLException
+                    | IllegalAccessException
+                    | InstantiationException
+                    | EzeExpection e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public List<T> findByAttributes(String... attributes){

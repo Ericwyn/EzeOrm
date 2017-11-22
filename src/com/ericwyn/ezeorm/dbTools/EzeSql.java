@@ -5,6 +5,8 @@ import com.ericwyn.ezeorm.tool.EzeConfig;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -66,5 +68,15 @@ public class EzeSql {
             e.printStackTrace();
         }
     }
+
+    public ResultSet runSQLForRes(String sql){
+        try {
+            return statement.executeQuery(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
 }
