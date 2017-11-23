@@ -1,5 +1,6 @@
 package com.ericwyn.ezeorm;
 
+import com.ericwyn.ezeorm.annotation.ColumnType;
 import com.ericwyn.ezeorm.dbTools.EzeSql;
 import com.ericwyn.ezeorm.dbTools.sqlbuilder.MySQLCodeBuilder;
 import com.ericwyn.ezeorm.expection.EzeExpection;
@@ -224,76 +225,127 @@ public class EzeDbServer<T> {
     }
 
     public List<T> findAll(){
-        List<T> list;
+        List<T> list=new ArrayList<>();
         ResultSet resultSet = ezeSql.runSQLForRes(coderBuilder.findAll(table));
         if(resultSet!=null){
             try {
                 Class clazz =entityClass;
-                Object object = clazz.newInstance();
 
                 Method[] methods = clazz.getMethods();
                 List<ColumnObj> columns = table.getColumns();
                 Field[] fields=clazz.getFields();
+                String methodNameTemp;
                 //获取每一列
-                if(resultSet.next()){
+                while (resultSet.next()){
+                    Object object = clazz.newInstance();
                     //通过字段名字解析每一列
                     //遍历所有的字段，取得字段的名字
                     for (ColumnObj columnObj:columns){
+                        String fieldName=ParseTools.getFieldNameFormColumnName(columnObj.getName());
+                        String classOfField=entityClass.getDeclaredField(fieldName).getType().getName();
+                        Class ca=entityClass.getDeclaredField(fieldName).getClass();
                         switch (columnObj.getType()){
                             //通过类型来获取变量，而后将变量塞到对应的object里面，再把object塞到list里面！！！！！！！！！！！就是这样的
+                            //INT 代表 int、Integer、byte、Byte、short、Short、long、Long、Boolean、boolean
                             case "INT":
-                                int resGetInt=resultSet.getInt(columnObj.getName());
-
-
+                                for (Method method:methods){
+                                    if(method.getParameterCount()==0){
+                                        continue;
+                                    }
+                                    methodNameTemp=method.getName().toLowerCase();
+                                    if(methodNameTemp.contains("set")
+                                            && methodNameTemp.contains(columnObj.getName().replaceAll("_","").toLowerCase())){
+                                        if (classOfField.contains("Long") || classOfField.contains("long")){
+                                            method.invoke(object,(long)resultSet.getLong(columnObj.getName()));
+                                        }
+                                        else if (classOfField.contains("Integer") || classOfField.contains("int")){
+                                            method.invoke(object,(int)resultSet.getLong(columnObj.getName()));
+                                        }
+                                        else if (classOfField.contains("Byte") || classOfField.contains("byte")){
+                                            method.invoke(object,(byte)resultSet.getLong(columnObj.getName()));
+                                        }
+                                        else if (classOfField.contains("Short") || classOfField.contains("short")){
+                                            method.invoke(object,(short)resultSet.getLong(columnObj.getName()));
+                                        }
+                                        else if (classOfField.contains("Boolean") || classOfField.contains("boolean")){
+                                            if((int)resultSet.getLong(columnObj.getName())==1){
+                                                method.invoke(object,true);
+                                            }else {
+                                                method.invoke(object,false);
+                                            }
+                                        }
+                                        break;
+                                    }
+                                }
+                                break;
                             case "DOUBLE":
-                                double resGetDouble=resultSet.getDouble(columnObj.getName());
-
+                                for (Method method:methods){
+                                    if(method.getParameterCount()==0){
+                                        continue;
+                                    }
+                                    methodNameTemp=method.getName().toLowerCase();
+                                    if(methodNameTemp.contains("set")
+                                            && methodNameTemp.contains(columnObj.getName().replaceAll("_","").toLowerCase())){
+                                        method.invoke(object, (double)resultSet.getDouble(columnObj.getName()));
+                                        break;
+                                    }
+                                }
+                                break;
                             case "BIGINT":
-                                Long resGetBigint=resultSet.getLong(columnObj.getName());
 
-//                                String strTemp = resultSet.getString(columnObj.getName());
-//                                if(strTemp ==null){
-//                                    if (columnObj.isNotNull()){
-//                                        throw new EzeExpection("该非空字段无法从数据库中获取");
-//                                    }
-//                                }else {
-//                                    //找出与其同名的属性，然后创建这样的一个属性，塞到创建的object中
-//                                    for (Field field:fields){
-//                                        if (field.getName().toLowerCase().equals(columnObj.getName().replaceAll("_",""))){
-//                                            field.getType().newInstance();
-//                                        }
-//                                    }
-//                                    Long resGet=resultSet.getLong(columnObj.getName())
-//
-//
-//                                }
-//                                valueBuilder.append(invoke.toString() + ", ");
+                                for (Method method:methods){
+                                    if(method.getParameterCount()==0){
+                                        continue;
+                                    }
+                                    methodNameTemp=method.getName().toLowerCase();
+                                    if(methodNameTemp.contains("set")
+                                            && methodNameTemp.contains(columnObj.getName().replaceAll("_","").toLowerCase())){
+                                        method.invoke(object, (long)resultSet.getLong(columnObj.getName()));
+                                        break;
+                                    }
+                                }
                                 break;
                             case "TEXT":
-                                String resGetText=resultSet.getString(columnObj.getName());
-
-//                                valueBuilder.append("\"" + invoke.toString() + "\", ");
+                                for (Method method:methods){
+                                    if(method.getParameterCount()==0){
+                                        continue;
+                                    }
+                                    methodNameTemp=method.getName().toLowerCase();
+                                    if(methodNameTemp.contains("set")
+                                            && methodNameTemp.contains(columnObj.getName().replaceAll("_","").toLowerCase())){
+                                        method.invoke(object, (String)resultSet.getString(columnObj.getName()));
+                                        break;
+                                    }
+                                }
                                 break;
                             case "DATETIME":
-                                String resGetDatetime=resultSet.getString(columnObj.getName());
-//                                if (invoke instanceof Date) {
-//                                    valueBuilder.append("\"" + ParseTools.sdfForDATATIME.format((Date) invoke) + "\", ");
-//                                } else {
-//                                    throw new EzeExpection(columnObj.getName() + "字段 java 时间格式错误，请使用 java.util.Date()");
-//                                }
+                                for (Method method:methods){
+                                    if(method.getParameterCount()==0){
+                                        continue;
+                                    }
+                                    methodNameTemp=method.getName().toLowerCase();
+                                    if(methodNameTemp.contains("set")
+                                            && methodNameTemp.contains(columnObj.getName().replaceAll("_","").toLowerCase())){
+                                        method.invoke(object,(Date)resultSet.getTimestamp(columnObj.getName()));
+                                        break;
+                                    }
+                                }
                                 break;
                         }
-
-
                     }
-
+                    list.add((T)object);
                 }
+                return list;
             } catch (SQLException
                     | IllegalAccessException
+                    | NoSuchFieldException
                     | InstantiationException
-                    | EzeExpection e) {
+                    | InvocationTargetException e) {
                 e.printStackTrace();
+                return null;
             }
+        }else {
+            return null;
         }
     }
 

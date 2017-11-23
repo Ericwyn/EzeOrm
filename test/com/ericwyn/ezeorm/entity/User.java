@@ -8,15 +8,12 @@ import com.ericwyn.ezeorm.annotation.PrimaryKey;
 
 import java.util.Date;
 
-import jdk.nashorn.internal.objects.annotations.Constructor;
-
-
 /**
  *
  * user的实体类
  * Created by Ericwyn on 17-11-20.
  */
-@Entity(table = "user3")
+@Entity(table = "user")
 public class User {
 
     @PrimaryKey
@@ -38,8 +35,6 @@ public class User {
 
     @Column(type = ColumnType.INT)
     private boolean good;
-
-    private boolean haveMilk;
 
     public User() {
 

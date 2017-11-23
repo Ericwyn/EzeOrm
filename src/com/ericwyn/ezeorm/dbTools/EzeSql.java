@@ -63,6 +63,9 @@ public class EzeSql {
 
     public void runSQL(String sql) {
         try {
+            if (statement==null){
+                statement=conn.createStatement();
+            }
             statement.execute(sql);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -71,6 +74,9 @@ public class EzeSql {
 
     public ResultSet runSQLForRes(String sql){
         try {
+            if (statement==null){
+                statement=conn.createStatement();
+            }
             return statement.executeQuery(sql);
         } catch (SQLException e) {
             e.printStackTrace();

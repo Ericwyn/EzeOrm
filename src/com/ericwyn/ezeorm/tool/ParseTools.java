@@ -1,6 +1,7 @@
 package com.ericwyn.ezeorm.tool;
 
 import com.ericwyn.ezeorm.annotation.AutoIncrement;
+import com.ericwyn.ezeorm.annotation.ColumnType;
 import com.ericwyn.ezeorm.annotation.PrimaryKey;
 import com.ericwyn.ezeorm.expection.EzeExpection;
 import com.ericwyn.ezeorm.annotation.Column;
@@ -67,23 +68,12 @@ public class ParseTools {
                             Column column=(Column) annotation;
                             isColumn=true;
                             String fieldNameTemp=field.getName();
+                            columnObj.setName(getColumnNameFormFieldName(fieldNameTemp));
+
                             //分割驼峰命名法
                             //通过统一的逻辑由类属性名称获取字段的命名。
 //                            columnObj.setName(column.name());
                             String[] r = fieldNameTemp.split("(?=[A-Z])");
-                            if(r.length==0){
-                                columnObj.setName(r[0].toLowerCase());
-                            }else {
-                                String temp="";
-                                for (int i=0;i<r.length;i++){
-                                    if (i!=r.length-1){
-                                        temp+=r[i].toLowerCase()+"_";
-                                    }else {
-                                        temp+=r[i].toLowerCase();
-                                    }
-                                }
-                                columnObj.setName(temp);
-                            }
                             columnObj.setNotNull(column.notNull());
                             columnObj.setType(column.type().toString());
                         }
@@ -112,6 +102,40 @@ public class ParseTools {
             }
             tableObj.setColumns(columns);
             return tableObj;
+        }
+    }
+
+
+    //通过类的属性名获取数据库字段名的方法
+    public static String getColumnNameFormFieldName(String fieldName){
+        String[] r = fieldName.split("(?=[A-Z])");
+
+        if(r.length==0){
+            return r[0].toLowerCase();
+        }else {
+            String temp="";
+            for (int i=0;i<r.length;i++){
+                if (i!=r.length-1){
+                    temp+=r[i].toLowerCase()+"_";
+                }else {
+                    temp+=r[i].toLowerCase();
+                }
+            }
+            return temp;
+        }
+    }
+
+    //通过数据库字段名获取其在类中对应的属性名的方法
+    public static String getFieldNameFormColumnName(String columnName){
+        String[] r2=columnName.split("_");
+        if(r2.length==0){
+            return r2[0];
+        }else {
+            String temp=r2[0];
+            for (int i=1;i<r2.length;i++){
+                temp+=(""+r2[i].charAt(0)).toUpperCase()+r2[i].substring(1,r2[i].length());
+            }
+            return temp;
         }
     }
 

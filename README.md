@@ -1,12 +1,12 @@
 # 简介
-EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象关系映射）框架。 关于ORM框架的简介请参考  [对象关系映射——维基百科](https://zh.wikipedia.org/wiki/%E5%AF%B9%E8%B1%A1%E5%85%B3%E7%B3%BB%E6%98%A0%E5%B0%84) 。帮助编写者更加简单的将自己的java 程序与数据库相连接。
+EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象关系映射）框架。 关于ORM框架的简介请参考  [对象关系映射——维基百科](https://zh.wikipedia.org/wiki/%E5%AF%B9%E8%B1%A1%E5%85%B3%E7%B3%BB%E6%98%A0%E5%B0%84) 。帮助程序员更加简单的将自己的java 程序与数据库相连接。
 
 ## 数据库支持
  - mysql
  - ~~SQLite~~ 尚未支持
 
 ## 项目状态
- - 开发中
+ - 开发中，已完成数据插入和数据查询功能。
   
 # 使用示例
 ### 创建Entity实体类
@@ -19,7 +19,6 @@ EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象
     
     import java.util.Date;
     
-    
     /**
      *
      * user的实体类
@@ -30,23 +29,26 @@ EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象
     
         @PrimaryKey
         @AutoIncrement
-        @Column(name = "id",type = ColumnType.INT)
+        @Column(type = ColumnType.INT)
         private Long id;
     
-        @Column(name = "name",type = ColumnType.TEXT,notNull = true)
+        @Column(type = ColumnType.TEXT,notNull = true)
         private String name;
     
-        @Column(name = "age",type = ColumnType.INT,notNull = true)
+        @Column(type = ColumnType.INT,notNull = true)
         private int age;
     
-        @Column(name = "sex",type = ColumnType.TEXT,notNull = true)
+        @Column(type = ColumnType.TEXT,notNull = true)
         private String sex;
     
-        @Column(name = "registerDate",type = ColumnType.DATETIME,notNull = true)
-        private Date date;
-        
+        @Column(type = ColumnType.DATETIME,notNull = true)
+        private Date timeStamp;
+    
+        @Column(type = ColumnType.INT)
+        private boolean good;
+    
         public User() {
-                
+    
         }
         
         //省略的Getter 和 Setter 方法
@@ -55,21 +57,50 @@ EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象
 
 ### 创建EzeDbServer并使用
 
-    import com.ericwyn.ezeorm.EzeDbServer;
+    package com.ericwyn.ezeorm;
     
-    import test.entity.User;
+    import com.ericwyn.ezeorm.entity.Admin;
+    import com.ericwyn.ezeorm.entity.User;
+    import java.util.Date;
+    import java.util.List;
     
+    /**
+     * Created by Ericwyn on 17-11-20.
+     */
     public class Main {
         public static void main(String[] args) throws Exception{
+            //创建EzeDbServer
+            EzeDbServer<User> userServer=new EzeDbServer.Builder<User>().setEntityClass(User.class).create();
+            EzeDbServer<Admin> adminServer=new EzeDbServer.Builder<Admin>().setEntityClass(Admin.class).create();
+    
+            //插入数据
+            User user=new User();
+            user.setName("girlName2");
+            user.setAge(11);
+            user.setTimeStamp(new Date());
+            user.setSex("girl");
+            user.setGood(false);
+    
+            userServer.insert(user);
             
-            EzeDbServer.Builder builder=new EzeDbServer.Builder();
-            builder.setEntityClass(User.class);
-            EzeDbServer userServer = builder.create();
+            Admin admin=new Admin();
+            admin.setAccount("test");
+            admin.setPw("testPw");
+    
+            adminServer.insert(admin);
             
-            //后续的增删改查操作
-            //userServer.insert();
-            //userServer.delete();
-            //......
+            
+            //查询数据
+            List<User> allUser = userServer.findAll();
+            for (User userTemp:allUser){
+                System.out.println(userTemp.getId()+" "+user.getName()+" "+userTemp.getSex()+" "+userTemp.getAge()+" "+userTemp.getTimeStamp());
+            }
+    
+            List<Admin> allAdmin = adminServer.findAll();
+            for (Admin adminTemp:allAdmin){
+                System.out.println(adminTemp.getId()+" "+adminTemp.getAccount()+" "+adminTemp.getPw());
+            }
+            
         }
     }
 
