@@ -160,6 +160,7 @@ public class EzeDbServer<T> {
      */
     private void createTable(TableObj tableObj){
         ezeSql.runSQL(coderBuilder.createTable(tableObj));
+        System.out.println("成功创建"+tableObj.getTableName()+"表");
     }
 
     /**
@@ -170,9 +171,9 @@ public class EzeDbServer<T> {
     private boolean isTableChange(TableObj table){
         TableObj oldTableObj=getTableObj(table.getTableName());
         if(table.equals(oldTableObj)){
-            System.out.println("表格没有变化");
+            System.out.println(table.getTableName()+"表结构未改变");
         }else {
-            System.out.println("表格与数据库表对比发生了变化");
+            System.out.println(table.getTableName()+"表结构与数据库表对比发生了变化");
         }
         return false;
     }
@@ -225,8 +226,35 @@ public class EzeDbServer<T> {
     }
 
     public List<T> findAll(){
-        List<T> list=new ArrayList<>();
         ResultSet resultSet = ezeSql.runSQLForRes(coderBuilder.findAll(table));
+        return parseResultSet(resultSet);
+    }
+
+    public List<T> findByAttributes(String... attributes){
+        ResultSet resultSet = ezeSql.runSQLForRes(coderBuilder.findByAttributes(table,attributes));
+        return parseResultSet(resultSet);
+    }
+
+    public void insert(T t){
+        ezeSql.runSQL(coderBuilder.insert(table,t));
+    }
+
+    public void insertList(List<T> list){
+        for (T temp:list){
+            insert(temp);
+        }
+    }
+
+    public void delete(T t){
+
+    }
+
+    public void deleteByAttributes(String... attributes){
+
+    }
+
+    private List<T> parseResultSet(ResultSet resultSet){
+        List<T> list=new ArrayList<>();
         if(resultSet!=null){
             try {
                 Class clazz =entityClass;
@@ -348,27 +376,5 @@ public class EzeDbServer<T> {
             return null;
         }
     }
-
-    public List<T> findByAttributes(String... attributes){
-        return null;
-    }
-
-    public void insert(T t){
-        ezeSql.runSQL(coderBuilder.insert(table,t));
-    }
-
-    public void insertList(List<T> list){
-
-    }
-
-    public void delete(T t){
-
-    }
-
-    public void deleteByAttributes(String... attributes){
-
-    }
-
-
 
 }

@@ -153,7 +153,7 @@ public class MySQLCodeBuilder {
             stringBuilder.append(filedBuilder.toString().substring(0,filedBuilder.length()-2)).append(")\n")
                     .append("VALUES\n")
                     .append(valueBuilder.toString().substring(0,valueBuilder.length()-2)).append(");");
-            System.out.println(stringBuilder.toString());
+//            System.out.println(stringBuilder.toString());
             return stringBuilder.toString();
         }catch (Exception e){
             e.printStackTrace();
@@ -163,7 +163,24 @@ public class MySQLCodeBuilder {
 
 
     public String findAll(TableObj tableObj){
-        return "select * from "+tableObj.getTableName();
+        return "select * from "+tableObj.getTableName()+";";
     }
 
+    //按参数进行查询
+    public String findByAttributes(TableObj tableObj,String... attributes){
+        String temp="";
+        if(attributes.length==1){
+            temp+=attributes[0];
+        }else {
+            for(int i=0;i<attributes.length;i++){
+                if(i!=attributes.length-1){
+                    temp+=attributes[i]+" AND ";
+                }else {
+                    temp+=attributes[i];
+                }
+            }
+        }
+        String res="select * from "+tableObj.getTableName()+" WHERE "+temp+" ;";
+        return res;
+    }
 }
