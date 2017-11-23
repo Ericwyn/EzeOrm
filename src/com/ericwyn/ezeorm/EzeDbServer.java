@@ -245,14 +245,28 @@ public class EzeDbServer<T> {
         }
     }
 
+    //删除一条数据
     public void delete(T t){
-
+        ezeSql.runSQL(coderBuilder.delete(table,t));
     }
-
+    //删除表中全部数据
+    public void deleteAll(){
+        ezeSql.runSQL(coderBuilder.deleteAll(table));
+    }
+    //通过参数删除
     public void deleteByAttributes(String... attributes){
-
+        ezeSql.runSQL(coderBuilder.deleteByAttributes(table,attributes));
     }
-
+    //删除一个列表
+    public void deleteList(List<T> list){
+        for (T temp:list){
+            delete(temp);
+        }
+    }
+    //删除数据表
+    public void dropTable(){
+        ezeSql.runSQL(coderBuilder.dropTable(table));
+    }
     private List<T> parseResultSet(ResultSet resultSet){
         List<T> list=new ArrayList<>();
         if(resultSet!=null){

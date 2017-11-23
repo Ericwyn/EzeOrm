@@ -91,6 +91,7 @@ public class MySQLCodeBuilder {
                                     case "INT":
                                     case "DOUBLE":
                                     case "BIGINT":
+                                        //这里略过了对INT 的boolean的判断，因为直接插入后在mysql 里面就会变成0、1了
                                         valueBuilder.append(invoke.toString() + ", ");
                                         break;
                                     case "TEXT":
@@ -103,14 +104,6 @@ public class MySQLCodeBuilder {
                                             throw new EzeExpection(columnObj.getName() + "字段 java 时间格式错误，请使用 java.util.Date()");
                                         }
                                         break;
-                                    case "BOOLEAN":
-                                        if((Boolean)invoke){
-                                            valueBuilder.append("1, ");
-                                            break;
-                                        }else {
-                                            valueBuilder.append("0, ");
-                                            break;
-                                        }
                                 }
                             }
 
@@ -183,4 +176,93 @@ public class MySQLCodeBuilder {
         String res="select * from "+tableObj.getTableName()+" WHERE "+temp+" ;";
         return res;
     }
+
+    //删除一行数据
+    public String delete(TableObj tableObj,Object object){
+        try {
+            StringBuilder stringBuilder=new StringBuilder();
+            StringBuilder valueBuilder=new StringBuilder();
+            //获取器方法
+            Method[] declaredMethods = object.getClass().getMethods();
+            //遍历表中所有字段
+            for (ColumnObj columnObj:tableObj.getColumns()){
+                //遍历所有的方法，找到获取字段对应的属性的值的方法
+                for (Method method:declaredMethods){
+                    try {
+                        String methodNameTemp=method.getName().toLowerCase();
+                        //找到了对应的属性获取方法
+                        if(method.getParameterCount()!=0){
+                            continue;
+                        }
+                        if(methodNameTemp.equals("get"+columnObj.getName().replaceAll("_",""))
+                                || methodNameTemp.equals("is"+columnObj.getName().replaceAll("_",""))
+                                ){
+                            Object invoke = method.invoke(object);
+                            if(invoke!=null){
+                                switch (columnObj.getType()) {
+                                    case "INT":
+                                    case "DOUBLE":
+                                    case "BIGINT":
+                                        if(invoke.toString().equals("true")){
+                                            valueBuilder.append(columnObj.getName()+"="+1 + " AND ");
+                                        }else if(invoke.toString().equals("false")){
+                                            valueBuilder.append(columnObj.getName()+"="+0 + " AND ");
+                                        }else {
+                                            valueBuilder.append(columnObj.getName()+"="+invoke.toString() + " AND ");
+                                        }
+                                        break;
+                                    case "TEXT":
+                                        valueBuilder.append(columnObj.getName()+"="+ "\"" + invoke.toString() + "\" AND ");
+                                        break;
+                                    case "DATETIME":
+                                        if (invoke instanceof Date) {
+                                            valueBuilder.append(columnObj.getName()+"="+"\"" + ParseTools.sdfForDATATIME.format((Date) invoke) + "\" AND ");
+                                        } else {
+                                            throw new EzeExpection(columnObj.getName() + "字段 java 时间格式错误，请使用 java.util.Date()");
+                                        }
+                                        break;
+                                }
+                            }
+
+                        }
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            stringBuilder.append("DELETE FROM ").append(tableObj.getTableName()).append(" WHERE ")
+                    .append(valueBuilder.toString().substring(0,valueBuilder.length()-4)).append(";");
+
+            return stringBuilder.toString();
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+    //删除表中所有数据
+    public String deleteAll(TableObj tableObj){
+        return "DELETE FROM "+tableObj.getTableName();
+    }
+    //通过参数删除
+    public String deleteByAttributes(TableObj tableObj,String... attributes){
+        String temp="";
+        if(attributes.length==1){
+            temp+=attributes[0];
+        }else {
+            for(int i=0;i<attributes.length;i++){
+                if(i!=attributes.length-1){
+                    temp+=attributes[i]+" AND ";
+                }else {
+                    temp+=attributes[i];
+                }
+            }
+        }
+        String res="DELETE from "+tableObj.getTableName()+" WHERE "+temp+" ;";
+        return res;
+    }
+    //删表（下一步怕就是跑路了吧（雾...）
+    public String dropTable(TableObj tableObj){
+        return "DROP TABLE "+tableObj.getTableName()+";";
+    }
+
 }

@@ -6,8 +6,26 @@ EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象
  - ~~SQLite~~ 尚未支持
 
 ## 项目状态
- - 开发中，已完成数据插入和数据查询功能。
-  
+### 已实现功能
+ - 注解
+ - 数据表的创建
+ - 数据的增加
+    - 单行插入
+    - 多行插入
+ - 数据的查找
+    - 全部查找
+    - 按条件查找
+ - 数据的删除
+    - 单行数据删除
+    - 按条件删除
+    - 整个数据表删除
+ 
+### 未实现
+ - 数据的更新
+ - 外键
+ - 数据表结构的修改
+ - 其他特性...
+ 
 # 使用示例
 ### 创建Entity实体类
 
@@ -107,6 +125,7 @@ EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象
     }
 
     userServer.insertList(userList);
+    
 ### 查询数据
 
     //查询所有数据
@@ -117,20 +136,48 @@ EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象
     }
 
     //自定义条件查询
-    List<User> allGirl = userServer.findByAttributes("sex = \"girl\"");
+    List<User> allGirl = userServer.findByAttributes("sex = 'girl'");
     for (User userTemp:allGirl){
         System.out.println(userTemp.getId()+" "+userTemp.getName()+" "+userTemp.getSex()+" "
                 +userTemp.getAge()+" "+userTemp.getTimeStamp());
     }
 
     //多条件查询
-    List<User> allGirl2=userServer.findByAttributes("sex = \"girl\"","age > 11");
+    List<User> allGirl2=userServer.findByAttributes("sex = 'girl'","age > 11");
     for (User userTemp:allGirl2){
         System.out.println(userTemp.getId()+" "+userTemp.getName()+" "+userTemp.getSex()+" "
                 +userTemp.getAge()+" "+userTemp.getTimeStamp());
     }
     
-注：自定义条件查询、多条件查询当中的条件参数，需与MySql查询语句WHERE后条件语句写法一致
+ - 注 1：自定义条件查询、多条件查询当中的条件参数，需与MySql查询语句WHERE后条件语句写法一致
+
+### 删除数据
+
+    //删除单条数据
+    List<User> allGirl = userServer.findByAttributes("id=1");
+    for (User userTemp:allGirl){
+        userServer.delete(userTemp);
+    }
+    
+    //自定义条件删除
+    userServer.deleteByAttributes("sex ='boy'");
+    
+    //多条件删除
+    userServer.deleteByAttributes("sex ='boy'","age >= 15");
+    
+    //删除表中所有数据
+    userServer.deleteAll();
+    
+    //删除列表 （不推荐使用该方法，推荐使用多条件删除）
+    List<User> allGirl=userServer.findByAttributes("sex = 'girl'");
+    userServer.deleteList(allGirl);
+
+    //删除该数据表
+    userServer.dropTable();
+    
+ - 注 1：删除单条数据时候，会根据传入的 Entity 对象所有属性构建删除的SQL语句，所以有可能无法构造出一个与数据库中的某一列完全映射的实体类对象。所以使用这个方法时候，推荐是先通过查询方法获取实体类对象之后在将其作为参数传入
+ - 注 2：一般情况下更推荐使用传入条件限定语句进行删除操作
+ - 注 3：自定义条件删除、多条件删除当中的条件参数，需与MySql删除语句WHERE后条件语句写法一致
 
 ## 对象关系映射表
 ### **mysql**里的映射
