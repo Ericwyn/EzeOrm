@@ -55,7 +55,7 @@ public class EzeDbServer<T> {
             Class<T> tClass = (Class<T>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
             return tClass;
         }
-        EzeDbServer<T> create(){
+        public EzeDbServer<T> create(){
             if(this.entityClass==null){
                 try {
                     throw new EzeExpection("Builder 没有设定对象实体类，请调用 Builder.setEntityClass() 方法进行设置");
