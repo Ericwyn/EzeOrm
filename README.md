@@ -1,6 +1,7 @@
 # EzeOrm 简介
 EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象关系映射）框架。 关于ORM框架的简介请参考  [对象关系映射——维基百科](https://zh.wikipedia.org/wiki/%E5%AF%B9%E8%B1%A1%E5%85%B3%E7%B3%BB%E6%98%A0%E5%B0%84) 。帮助程序员更加简单的将自己的java 程序与数据库相连接。
 
+![ezeOrm](ezeOrm.png)
 ## 数据库支持
  - 暂只支持 Mysql
 
@@ -262,11 +263,11 @@ EzeOrm 封装了一个`parseResultSet(ResultSet rs)`方法，能够帮助用户�
     - 打开mysql配置文件 `/etc/mysql/my.cnf` (Windows为安装目录下 复制`my-default.ini`后重命名为`my.ini`)
     - 增加以下内容
 
-                [client]
-                default-character-set=utf8
+            [client]
+            default-character-set=utf8
 
-                [mysqld]
-                character-set-server=utf8
+            [mysqld]
+            character-set-server=utf8
 
-                [mysql]
-                default-character-set=utf8
+            [mysql]
+            default-character-set=utf8
