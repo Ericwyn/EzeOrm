@@ -247,9 +247,26 @@ EzeOrm 封装了一个`parseResultSet(ResultSet rs)`方法，能够帮助用户�
  - 各个实体类对象绑定的`EzeDbServer`，都要通过`MySQLCodeBuilder` 来生成增删改查使用的SQL语句，而后再传输到`EzeSql`的sql执行方法当中
 
 # 其他说明
-## 关于表结构更新
+### 关于表结构更新
 所有的表格更新都采用同一种方式，参考`spring.jpa.properties.hibernate.hbm2ddl.auto`属性，与`spring.jpa.properties.hibernate.hbm2ddl.auto`的 `update` 模式相同。第一次加载时根据Entity类会自动建立起表的结构（前提是先建立好数据库），以后加载时根据`Entity`类自动更新表结构，即使表结构改变了但表中的行仍然存在不会删除以前的行，表结构是不会在部署之初被马上建立起来的，是要等应用第一次运行起来后才会。后期可能会使用一个新的注解或者配置项，来达到像Hibernate 那样的表结构更新模式设置。
 
-## 关于Entity类中属性的命名
+### 关于Entity类中属性的命名
  - 非 Boolean 或非 boolean 类型的变量统一使用驼峰发命名，如`registerDate`
  - Boolean 或者 boolean 类型的变量无需在变量名头部加入 `is` ，例如不能是`isGood`，而应该直接是`good`
+ 
+### 关于编码格式以及中文乱码
+ - 中文乱码一般与数据库的创建、表的创建、以及连接的 url 设置有关，EzeOrm 在创建表时候使用的是`UTF-8`编码
+ - 推荐在建立数据库的时候设置 `CHARACTER` 为 `UTF-8` 以及 `COLLATE` 为 `utf8_general_ci`
+ - 推荐在`ezeorm.cfg`当中设定 url 参数时候加上`?characterEncoding=utf-8&useUnicode=true`
+ - 若还是遇到插入数据时候的中文乱码问题，参考一下[ubuntu中mysql修改编码utf8](http://blog.csdn.net/crave_shy/article/details/23345869)中的设置，将Mysql的默认编码格式改为`UTF-8`，具体修改如下
+    - 打开mysql配置文件 `/etc/mysql/my.cnf` (Windows为安装目录下 复制`my-default.ini`后重命名为`my.ini`)
+    - 增加以下内容
+    
+        [client]
+        default-character-set=utf8
+        
+        [mysqld]
+        character-set-server=utf8
+        
+        [mysql]
+        default-character-set=utf8
