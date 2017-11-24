@@ -261,12 +261,12 @@ EzeOrm 封装了一个`parseResultSet(ResultSet rs)`方法，能够帮助用户�
  - 若还是遇到插入数据时候的中文乱码问题，参考一下[ubuntu中mysql修改编码utf8](http://blog.csdn.net/crave_shy/article/details/23345869)中的设置，将Mysql的默认编码格式改为`UTF-8`，具体修改如下
     - 打开mysql配置文件 `/etc/mysql/my.cnf` (Windows为安装目录下 复制`my-default.ini`后重命名为`my.ini`)
     - 增加以下内容
-    
-        [client]
-        default-character-set=utf8
-        
-        [mysqld]
-        character-set-server=utf8
-        
-        [mysql]
-        default-character-set=utf8
+
+                [client]
+                default-character-set=utf8
+
+                [mysqld]
+                character-set-server=utf8
+
+                [mysql]
+                default-character-set=utf8
