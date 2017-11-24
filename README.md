@@ -1,9 +1,8 @@
-# 简介
+# EzeOrm 简介
 EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象关系映射）框架。 关于ORM框架的简介请参考  [对象关系映射——维基百科](https://zh.wikipedia.org/wiki/%E5%AF%B9%E8%B1%A1%E5%85%B3%E7%B3%BB%E6%98%A0%E5%B0%84) 。帮助程序员更加简单的将自己的java 程序与数据库相连接。
 
 ## 数据库支持
- - mysql
- - ~~SQLite~~ 尚未支持
+ - 暂只支持 Mysql
 
 ## 项目状态
 ### 已实现功能
@@ -19,9 +18,10 @@ EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象
     - 单行数据删除
     - 按条件删除
     - 整个数据表删除
+ - 数据的更新
+ - Sql语句的调用
  
 ### 未实现
- - 数据的更新
  - 外键
  - 数据表结构的修改
  - 其他特性...
@@ -178,6 +178,32 @@ EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象
  - 注 1：删除单条数据时候，会根据传入的 Entity 对象所有属性构建删除的SQL语句，所以有可能无法构造出一个与数据库中的某一列完全映射的实体类对象。所以使用这个方法时候，推荐是先通过查询方法获取实体类对象之后在将其作为参数传入
  - 注 2：一般情况下更推荐使用传入条件限定语句进行删除操作
  - 注 3：自定义条件删除、多条件删除当中的条件参数，需与MySql删除语句WHERE后条件语句写法一致
+### 更新数据
+
+    List<User> allGirlTemp = userServer.findByAttributes(" sex ='girl' ");
+    for (User userTemp:allUser){
+        userTemp.setSex("boy");
+        userServer.updata(userTemp);
+        
+    }
+
+ - 注 1：使用该方法更新数据的时候，会先判断传入的对象是否有主键标记的属性，以及该属性下面的值，所以使用该方法的时候，推荐尽量先通过find方法查询到的相应的对象，修改了对象的属性之后再传入，以此完成修改。
+
+### 调用Sql语句
+EzeOrm框架进行了简单封装帮助用户直接运行sql语句，其中一个方法会返回`runQuery(String sqlCode)`将不会有返回值，而`runQueryForRes(String sqlCode)`将会返回 `ResultSet` 对象
+
+    userServer.runQuery("DROP TABLE user");
+    ResultSet resultSet = userServer.runQueryForRes("SELECT * FROM user ");
+
+### 解析ResultSet
+EzeOrm 封装了一个`parseResultSet(ResultSet rs)`方法，能够帮助用户解析查询时候返回的ResultSet
+
+    ResultSet resultSet = userServer.runQueryForRes("SELECT * FROM user ");
+    List<User> users = userServer.parseResultSet(resultSet);
+    for (User user:users){
+        System.out.println(user.getName());
+    }
+
 
 ## 对象关系映射表
 ### **mysql**里的映射

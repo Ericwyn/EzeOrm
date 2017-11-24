@@ -6,6 +6,7 @@ import com.ericwyn.ezeorm.obj.TableObj;
 import com.ericwyn.ezeorm.tool.EzeConfig;
 import com.ericwyn.ezeorm.tool.ParseTools;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -264,5 +265,135 @@ public class MySQLCodeBuilder {
     public String dropTable(TableObj tableObj){
         return "DROP TABLE "+tableObj.getTableName()+";";
     }
+
+    public String updata(TableObj tableObj,Object object){
+        try {
+            //通过反射获取主键的值
+            String primaryKeyAndValue="";
+            String primaryKeyName = tableObj.getPrimaryKey();
+            Method[] methods=object.getClass().getDeclaredMethods();
+            if (primaryKeyName == null || primaryKeyName.equals("")){
+                throw new EzeExpection("该表不存在主键字段，无法使用该方法更新");
+            }else {
+                for (Method method:methods){
+                    String methodNameTemp = method.getName().toLowerCase();
+                    if (method.getParameterCount() != 0) {
+                        continue;
+                    }
+                    if((methodNameTemp.contains("get") && methodNameTemp.contains(ParseTools.getFieldNameFormColumnName(primaryKeyName)))
+                            || (methodNameTemp.contains("is") && methodNameTemp.contains(ParseTools.getFieldNameFormColumnName(primaryKeyName)))){
+                        Object invoke = method.invoke(object);
+                        if(invoke!=null){
+                            List<ColumnObj> columnObjs=tableObj.getColumns();
+                            String keyPrimaryKeyType="";
+                            for (ColumnObj columnObj:columnObjs){
+                                if(columnObj.getName().equals(primaryKeyName)){
+                                    keyPrimaryKeyType=columnObj.getType();
+                                    break;
+                                }
+                            }
+                            switch (keyPrimaryKeyType) {
+                                case "INT":
+                                case "DOUBLE":
+                                case "BIGINT":
+                                    if(invoke.toString().equals("true")){
+                                        primaryKeyAndValue = primaryKeyName+"="+1;
+                                    }else if(invoke.toString().equals("false")){
+                                        primaryKeyAndValue =primaryKeyName+"="+0;
+                                    }else {
+                                        primaryKeyAndValue = primaryKeyName+"="+invoke.toString();
+                                    }
+                                    break;
+                                case "TEXT":
+                                    primaryKeyAndValue = primaryKeyName +"="+"'"+invoke.toString()+"'";
+                                    break;
+                                case "DATETIME":
+                                    if (invoke instanceof Date) {
+                                        primaryKeyAndValue = primaryKeyName +"="+"'"+ ParseTools.sdfForDATATIME.format((Date) invoke)+"'";
+                                    } else {
+                                        throw new EzeExpection(primaryKeyName + "字段 java 时间格式错误，请使用 java.util.Date()");
+                                    }
+                                    break;
+                            }
+                            break;
+                        }else {
+                            throw new EzeExpection("无法通过get、is方法获取该映射对象内主键的值，无法更新表");
+                        }
+                    }
+                }
+                if(primaryKeyAndValue.equals("")){
+                    throw new EzeExpection("无法获取该映射对象内主键的值，有可能是因为没有主键值的get 或者 is 方法，无法更新表");
+                }
+
+                //构造更新的语句，代码和delete语句构造方法的一样
+                StringBuilder stringBuilder=new StringBuilder();
+                StringBuilder valueBuilder2=new StringBuilder();
+
+                //遍历表中所有字段
+                for (ColumnObj columnObj:tableObj.getColumns()){
+                    if (columnObj.getName().equals(tableObj.getPrimaryKey())){
+                        continue;
+                    }
+                    //遍历所有的方法，找到获取字段对应的属性的值的方法
+                    for (Method method:methods){
+                        try {
+                            String methodNameTemp=method.getName().toLowerCase();
+                            //找到了对应的属性获取方法
+                            if(method.getParameterCount()!=0){
+                                continue;
+                            }
+                            if(methodNameTemp.equals("get"+columnObj.getName().replaceAll("_",""))
+                                    || methodNameTemp.equals("is"+columnObj.getName().replaceAll("_",""))
+                                    ){
+                                Object invoke = method.invoke(object);
+                                if(invoke!=null){
+                                    switch (columnObj.getType()) {
+                                        case "INT":
+                                        case "DOUBLE":
+                                        case "BIGINT":
+                                            if(invoke.toString().equals("true")){
+                                                valueBuilder2.append(columnObj.getName()+"=true" + " , ");
+                                            }else if(invoke.toString().equals("false")){
+                                                valueBuilder2.append(columnObj.getName()+"=false" + " , ");
+                                            }else {
+                                                valueBuilder2.append(columnObj.getName()+"="+invoke.toString() + " , ");
+                                            }
+                                            break;
+                                        case "TEXT":
+                                            valueBuilder2.append(columnObj.getName()+"="+ "'" + invoke.toString() + "' , ");
+                                            break;
+                                        case "DATETIME":
+                                            if (invoke instanceof Date) {
+                                                valueBuilder2.append(columnObj.getName()+"="+"'" + ParseTools.sdfForDATATIME.format((Date) invoke) + "' , ");
+                                            } else {
+                                                throw new EzeExpection(columnObj.getName() + "字段 java 时间格式错误，请使用 java.util.Date()");
+                                            }
+                                            break;
+                                    }
+                                }
+
+                            }
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                stringBuilder.append("UPDATE ").append(tableObj.getTableName())
+                        .append(" SET ")
+                        .append(valueBuilder2.toString().substring(0,valueBuilder2.length()-3))
+                        .append(" WHERE ")
+                        .append(primaryKeyAndValue)
+                        .append(";");
+
+                return stringBuilder.toString();
+            }
+        }catch (IllegalAccessException
+                | InvocationTargetException
+                | EzeExpection e){
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
 }

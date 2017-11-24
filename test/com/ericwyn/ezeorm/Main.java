@@ -3,6 +3,7 @@ package com.ericwyn.ezeorm;
 import com.ericwyn.ezeorm.entity.Admin;
 import com.ericwyn.ezeorm.entity.User;
 
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,9 +17,9 @@ public class Main {
         EzeDbServer<User> userServer=new EzeDbServer.Builder<User>()
                 .setEntityClass(User.class)
                 .create();
-        EzeDbServer<Admin> adminServer=new EzeDbServer.Builder<Admin>()
-                .setEntityClass(Admin.class)
-                .create();
+//        EzeDbServer<Admin> adminServer=new EzeDbServer.Builder<Admin>()
+//                .setEntityClass(Admin.class)
+//                .create();
 
 //        //插入单条数据
 //        User user=new User();
@@ -30,7 +31,7 @@ public class Main {
 //
 //        userServer.insert(user);
 //
-//        //插入多条数据
+//        插入多条数据
 //        ArrayList<User> userList=new ArrayList<>();
 //        for (int i=0;i<10;i++){
 //            User listUserTemp=new User();
@@ -74,6 +75,21 @@ public class Main {
 //        for (User userTemp:allGirl2){
 //            System.out.println(userTemp.getId()+" "+userTemp.getName()+" "+userTemp.getSex()+" "
 //                    +userTemp.getAge()+" "+userTemp.getTimeStamp());
+//        }
+
+//        //更新数据
+//        List<User> allGirlTemp = userServer.findByAttributes(" sex ='girl' ");
+//        for (User userTemp:allUser){
+//            userTemp.setSex("boy");
+//            userServer.updata(userTemp);
+//
+//        }
+
+//        userServer.runQuery("DROP TABLE user");
+//        ResultSet resultSet = userServer.runQueryForRes("SELECT * FROM user ");
+//        List<User> users = userServer.parseResultSet(resultSet);
+//        for (User user:users){
+//            System.out.println(user.getName());
 //        }
 
     }

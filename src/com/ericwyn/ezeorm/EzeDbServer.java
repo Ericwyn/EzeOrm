@@ -46,14 +46,11 @@ public class EzeDbServer<T> {
         public Builder(){
 //            this.entityClass=getTClass();
         }
-
         //因为无法通过反射获取T.class 所以需要再加上一个 setEntityClass 的方法
         public Builder<T> setEntityClass(Class<T> entityClass){
             this.entityClass=entityClass;
             return this;
         }
-
-
         private Class<T> getTClass(){
             Class<T> tClass = (Class<T>)((ParameterizedType)getClass().getGenericSuperclass()).getActualTypeArguments()[0];
             return tClass;
@@ -267,12 +264,24 @@ public class EzeDbServer<T> {
     public void dropTable(){
         ezeSql.runSQL(coderBuilder.dropTable(table));
     }
-    private List<T> parseResultSet(ResultSet resultSet){
+
+    public void updata(T t){
+        ezeSql.runSQL(coderBuilder.updata(table,t));
+    }
+
+    public ResultSet runQueryForRes(String sqlCode){
+        return ezeSql.runSQLForRes(sqlCode);
+    }
+
+    public void runQuery(String sqlCode){
+        ezeSql.runSQL(sqlCode);
+    }
+
+    public List<T> parseResultSet(ResultSet resultSet){
         List<T> list=new ArrayList<>();
         if(resultSet!=null){
             try {
                 Class clazz =entityClass;
-
                 Method[] methods = clazz.getMethods();
                 List<ColumnObj> columns = table.getColumns();
                 Field[] fields=clazz.getFields();
