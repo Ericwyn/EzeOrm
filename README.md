@@ -184,7 +184,7 @@ EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象
     List<User> allGirlTemp = userServer.findByAttributes(" sex ='girl' ");
     for (User userTemp:allUser){
         userTemp.setSex("boy");
-        userServer.updata(userTemp);
+        userServer.update(userTemp);
         
     }
 

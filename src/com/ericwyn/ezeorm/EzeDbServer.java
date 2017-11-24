@@ -1,20 +1,16 @@
 package com.ericwyn.ezeorm;
 
-import com.ericwyn.ezeorm.annotation.ColumnType;
 import com.ericwyn.ezeorm.dbTools.EzeSql;
 import com.ericwyn.ezeorm.dbTools.sqlbuilder.MySQLCodeBuilder;
 import com.ericwyn.ezeorm.expection.EzeExpection;
 import com.ericwyn.ezeorm.obj.ColumnObj;
 import com.ericwyn.ezeorm.obj.TableObj;
 import com.ericwyn.ezeorm.tool.ParseTools;
-import com.sun.deploy.util.ReflectionUtil;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -265,8 +261,8 @@ public class EzeDbServer<T> {
         ezeSql.runSQL(coderBuilder.dropTable(table));
     }
 
-    public void updata(T t){
-        ezeSql.runSQL(coderBuilder.updata(table,t));
+    public void update(T t){
+        ezeSql.runSQL(coderBuilder.update(table,t));
     }
 
     public ResultSet runQueryForRes(String sqlCode){

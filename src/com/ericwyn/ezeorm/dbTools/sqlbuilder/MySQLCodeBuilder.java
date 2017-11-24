@@ -266,7 +266,7 @@ public class MySQLCodeBuilder {
         return "DROP TABLE "+tableObj.getTableName()+";";
     }
 
-    public String updata(TableObj tableObj,Object object){
+    public String update(TableObj tableObj, Object object){
         try {
             //通过反射获取主键的值
             String primaryKeyAndValue="";

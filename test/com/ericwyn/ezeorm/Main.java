@@ -81,7 +81,7 @@ public class Main {
 //        List<User> allGirlTemp = userServer.findByAttributes(" sex ='girl' ");
 //        for (User userTemp:allUser){
 //            userTemp.setSex("boy");
-//            userServer.updata(userTemp);
+//            userServer.update(userTemp);
 //
 //        }
 
