@@ -5,6 +5,7 @@ import com.ericwyn.ezeorm.dbTools.sqlbuilder.MySQLCodeBuilder;
 import com.ericwyn.ezeorm.expection.EzeExpection;
 import com.ericwyn.ezeorm.obj.ColumnObj;
 import com.ericwyn.ezeorm.obj.TableObj;
+import com.ericwyn.ezeorm.tool.EzeConfig;
 import com.ericwyn.ezeorm.tool.ParseTools;
 
 import java.lang.reflect.Field;
@@ -126,7 +127,10 @@ public class EzeDbServer<T> {
                     break;
                 }
             }
-            ResultSet primaryKeys = m_DBMetaData.getPrimaryKeys("test", null, table_name);
+            String[] db_name_temp=EzeConfig.db_connect_url.split("\\?");
+            String[] db_name_temp2=db_name_temp[0].split("/");
+
+            ResultSet primaryKeys = m_DBMetaData.getPrimaryKeys(db_name_temp2[db_name_temp2.length-1], null, table_name);
             while (primaryKeys.next()){
                 tableObj.setPrimaryKey(primaryKeys.getString("COLUMN_NAME"));
             }
