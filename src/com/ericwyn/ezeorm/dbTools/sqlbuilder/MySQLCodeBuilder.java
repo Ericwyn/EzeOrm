@@ -33,12 +33,12 @@ public class MySQLCodeBuilder {
     public String createTable(TableObj tableObj){
         StringBuilder res=new StringBuilder();
 
-        res.append("CREATE TABLE IF NOT EXISTS ").append(tableObj.getTableName()).append(" (\n");
+        res.append("CREATE TABLE IF NOT EXISTS `").append(tableObj.getTableName()).append("` (\n");
 
         List<ColumnObj> list=tableObj.getColumns();
 
         for (ColumnObj columnObj:list){
-            res.append(columnObj.getName()).append(" ");
+            res.append("`").append(columnObj.getName()).append("` ");
             res.append(columnObj.getType()).append(" ");
             if(columnObj.isNotNull()){
                 res.append("NOT NULL ");
@@ -56,9 +56,9 @@ public class MySQLCodeBuilder {
 
     /**
      * 生成语句类似
-     * INSERT INTO user (name, age, sex, time_stamp)
+     * INSERT INTO user (`name`, `age`, `sex`, `time_stamp`)
      *      VALUES
-     *      ("testName", 11, "girl", "2017-11-22 19:09:01");
+     *      ('testName', 11, 'girl', "2017-11-22 19:09:01");
      * @param tableObj
      * @param object
      * @return
@@ -86,7 +86,7 @@ public class MySQLCodeBuilder {
                                 ){
                             Object invoke = method.invoke(object);
                             if(invoke!=null){
-                                filedBuilder.append(columnObj.getName()+", ");
+                                filedBuilder.append("`").append(columnObj.getName()+"`, ");
 
                                 switch (columnObj.getType()) {
                                     case "INT":
@@ -96,11 +96,11 @@ public class MySQLCodeBuilder {
                                         valueBuilder.append(invoke.toString() + ", ");
                                         break;
                                     case "TEXT":
-                                        valueBuilder.append("\"" + invoke.toString() + "\", ");
+                                        valueBuilder.append("'" + invoke.toString() + "', ");
                                         break;
                                     case "DATETIME":
                                         if (invoke instanceof Date) {
-                                            valueBuilder.append("\"" + ParseTools.sdfForDATATIME.format((Date) invoke) + "\", ");
+                                            valueBuilder.append("'" + ParseTools.sdfForDATATIME.format((Date) invoke) + "', ");
                                         } else {
                                             throw new EzeExpection(columnObj.getName() + "字段 java 时间格式错误，请使用 java.util.Date()");
                                         }
@@ -157,7 +157,7 @@ public class MySQLCodeBuilder {
 
 
     public String findAll(TableObj tableObj){
-        return "select * from "+tableObj.getTableName()+";";
+        return "select * from `"+tableObj.getTableName()+"`;";
     }
 
     //按参数进行查询
@@ -174,7 +174,7 @@ public class MySQLCodeBuilder {
                 }
             }
         }
-        String res="select * from "+tableObj.getTableName()+" WHERE "+temp+" ;";
+        String res="select * from `"+tableObj.getTableName()+"` WHERE "+temp+" ;";
         return res;
     }
 
@@ -205,19 +205,19 @@ public class MySQLCodeBuilder {
                                     case "DOUBLE":
                                     case "BIGINT":
                                         if(invoke.toString().equals("true")){
-                                            valueBuilder.append(columnObj.getName()+"="+1 + " AND ");
+                                            valueBuilder.append("`").append(columnObj.getName()+"`="+1 + " AND ");
                                         }else if(invoke.toString().equals("false")){
-                                            valueBuilder.append(columnObj.getName()+"="+0 + " AND ");
+                                            valueBuilder.append("`").append(columnObj.getName()+"`="+0 + " AND ");
                                         }else {
-                                            valueBuilder.append(columnObj.getName()+"="+invoke.toString() + " AND ");
+                                            valueBuilder.append("`").append(columnObj.getName()+"`="+invoke.toString() + " AND ");
                                         }
                                         break;
                                     case "TEXT":
-                                        valueBuilder.append(columnObj.getName()+"="+ "\"" + invoke.toString() + "\" AND ");
+                                        valueBuilder.append("`").append(columnObj.getName()+"`="+ "'" + invoke.toString() + "' AND ");
                                         break;
                                     case "DATETIME":
                                         if (invoke instanceof Date) {
-                                            valueBuilder.append(columnObj.getName()+"="+"\"" + ParseTools.sdfForDATATIME.format((Date) invoke) + "\" AND ");
+                                            valueBuilder.append("`").append(columnObj.getName()+"`="+"'" + ParseTools.sdfForDATATIME.format((Date) invoke) + "' AND ");
                                         } else {
                                             throw new EzeExpection(columnObj.getName() + "字段 java 时间格式错误，请使用 java.util.Date()");
                                         }
@@ -231,7 +231,7 @@ public class MySQLCodeBuilder {
                     }
                 }
             }
-            stringBuilder.append("DELETE FROM ").append(tableObj.getTableName()).append(" WHERE ")
+            stringBuilder.append("DELETE FROM `").append(tableObj.getTableName()).append("` WHERE ")
                     .append(valueBuilder.toString().substring(0,valueBuilder.length()-4)).append(";");
 
             return stringBuilder.toString();
@@ -242,7 +242,7 @@ public class MySQLCodeBuilder {
     }
     //删除表中所有数据
     public String deleteAll(TableObj tableObj){
-        return "DELETE FROM "+tableObj.getTableName();
+        return "DELETE FROM `"+tableObj.getTableName()+"`";
     }
     //通过参数删除
     public String deleteByAttributes(TableObj tableObj,String... attributes){
@@ -258,12 +258,12 @@ public class MySQLCodeBuilder {
                 }
             }
         }
-        String res="DELETE from "+tableObj.getTableName()+" WHERE "+temp+" ;";
+        String res="DELETE from `"+tableObj.getTableName()+"` WHERE "+temp+" ;";
         return res;
     }
     //删表（下一步怕就是跑路了吧（雾...）
     public String dropTable(TableObj tableObj){
-        return "DROP TABLE "+tableObj.getTableName()+";";
+        return "DROP TABLE `"+tableObj.getTableName()+"`;";
     }
 
     public String update(TableObj tableObj, Object object){
@@ -297,19 +297,19 @@ public class MySQLCodeBuilder {
                                 case "DOUBLE":
                                 case "BIGINT":
                                     if(invoke.toString().equals("true")){
-                                        primaryKeyAndValue = primaryKeyName+"="+1;
+                                        primaryKeyAndValue = "`"+primaryKeyName+"`="+1;
                                     }else if(invoke.toString().equals("false")){
-                                        primaryKeyAndValue =primaryKeyName+"="+0;
+                                        primaryKeyAndValue ="`"+primaryKeyName+"`="+0;
                                     }else {
-                                        primaryKeyAndValue = primaryKeyName+"="+invoke.toString();
+                                        primaryKeyAndValue = "`"+primaryKeyName+"`="+invoke.toString();
                                     }
                                     break;
                                 case "TEXT":
-                                    primaryKeyAndValue = primaryKeyName +"="+"'"+invoke.toString()+"'";
+                                    primaryKeyAndValue = "`"+primaryKeyName +"`="+"'"+invoke.toString()+"'";
                                     break;
                                 case "DATETIME":
                                     if (invoke instanceof Date) {
-                                        primaryKeyAndValue = primaryKeyName +"="+"'"+ ParseTools.sdfForDATATIME.format((Date) invoke)+"'";
+                                        primaryKeyAndValue = "`"+primaryKeyName +"`="+"'"+ ParseTools.sdfForDATATIME.format((Date) invoke)+"'";
                                     } else {
                                         throw new EzeExpection(primaryKeyName + "字段 java 时间格式错误，请使用 java.util.Date()");
                                     }
@@ -352,19 +352,19 @@ public class MySQLCodeBuilder {
                                         case "DOUBLE":
                                         case "BIGINT":
                                             if(invoke.toString().equals("true")){
-                                                valueBuilder2.append(columnObj.getName()+"=true" + " , ");
+                                                valueBuilder2.append("`").append(columnObj.getName()+"`=true" + " , ");
                                             }else if(invoke.toString().equals("false")){
-                                                valueBuilder2.append(columnObj.getName()+"=false" + " , ");
+                                                valueBuilder2.append("`").append(columnObj.getName()+"`=false" + " , ");
                                             }else {
-                                                valueBuilder2.append(columnObj.getName()+"="+invoke.toString() + " , ");
+                                                valueBuilder2.append("`").append(columnObj.getName()+"`="+invoke.toString() + " , ");
                                             }
                                             break;
                                         case "TEXT":
-                                            valueBuilder2.append(columnObj.getName()+"="+ "'" + invoke.toString() + "' , ");
+                                            valueBuilder2.append("`").append(columnObj.getName()+"`="+ "'" + invoke.toString() + "' , ");
                                             break;
                                         case "DATETIME":
                                             if (invoke instanceof Date) {
-                                                valueBuilder2.append(columnObj.getName()+"="+"'" + ParseTools.sdfForDATATIME.format((Date) invoke) + "' , ");
+                                                valueBuilder2.append("`").append(columnObj.getName()+"`="+"'" + ParseTools.sdfForDATATIME.format((Date) invoke) + "' , ");
                                             } else {
                                                 throw new EzeExpection(columnObj.getName() + "字段 java 时间格式错误，请使用 java.util.Date()");
                                             }
@@ -378,8 +378,8 @@ public class MySQLCodeBuilder {
                         }
                     }
                 }
-                stringBuilder.append("UPDATE ").append(tableObj.getTableName())
-                        .append(" SET ")
+                stringBuilder.append("UPDATE `").append(tableObj.getTableName())
+                        .append("` SET ")
                         .append(valueBuilder2.toString().substring(0,valueBuilder2.length()-3))
                         .append(" WHERE ")
                         .append(primaryKeyAndValue)
