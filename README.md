@@ -8,6 +8,11 @@ EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象
 ## 项目状态
 ### 已实现功能
  - 注解
+    - 主键注解（支持多个主键）
+    - 自增注解
+    - 非空注解
+    - 实体类注解
+    - 数据表列注解
  - 数据表的创建
  - 数据的增加
     - 单行插入
@@ -249,7 +254,8 @@ EzeOrm 封装了一个`parseResultSet(ResultSet rs)`方法，能够帮助用户�
 
 # 其他说明
 ### 关于表结构更新
-所有的表格更新都采用同一种方式，参考`spring.jpa.properties.hibernate.hbm2ddl.auto`属性，与`spring.jpa.properties.hibernate.hbm2ddl.auto`的 `update` 模式相同。第一次加载时根据Entity类会自动建立起表的结构（前提是先建立好数据库），以后加载时根据`Entity`类自动更新表结构，即使表结构改变了但表中的行仍然存在不会删除以前的行，表结构是不会在部署之初被马上建立起来的，是要等应用第一次运行起来后才会。后期可能会使用一个新的注解或者配置项，来达到像Hibernate 那样的表结构更新模式设置。
+~~所有的表格更新都采用同一种方式，参考`spring.jpa.properties.hibernate.hbm2ddl.auto`属性，与`spring.jpa.properties.hibernate.hbm2ddl.auto`的 `update` 模式相同。第一次加载时根据Entity类会自动建立起表的结构（前提是先建立好数据库），以后加载时根据`Entity`类自动更新表结构，即使表结构改变了但表中的行仍然存在不会删除以前的行，表结构是不会在部署之初被马上建立起来的，是要等应用第一次运行起来后才会。后期可能会使用一个新的注解或者配置项，来达到像Hibernate 那样的表结构更新模式设置。~~
+注：发当实体类生变化的时候，会将数据表删除并且重建新的数据表
 
 ### 关于Entity类中属性的命名
  - 非 Boolean 或非 boolean 类型的变量统一使用驼峰发命名，如`registerDate`

@@ -188,7 +188,8 @@ public class EzeDbServer<T> {
         //第一次加载时根据model类会自动建立起表的结构（前提是先建立好数据库）
         //以后加载hibernate时根据model类自动更新表结构，即使表结构改变了但表中的行仍然存在不会删除以前的行。
         //表结构是不会在部署之初被马上建立起来的，是要等应用第一次运行起来后才会。
-
+        dropTable();
+        createTable(table);
 
     }
 
@@ -206,7 +207,7 @@ public class EzeDbServer<T> {
      *      不存在：
      *           创建表格
      *
-     * @param table
+     * @param table 由实体类对象反射解析所得的表结构
      * @return
      */
     private void initTable(TableObj table){
