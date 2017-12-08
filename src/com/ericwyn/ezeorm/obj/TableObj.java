@@ -45,7 +45,12 @@ public class TableObj {
     }
 
     public void setPrimaryKey(String primaryKey) {
-        this.primaryKey = primaryKey;
+        if(this.primaryKey==null || this.primaryKey.equals("")){
+            this.primaryKey = primaryKey;
+        }else {
+            this.primaryKey=this.primaryKey+","+primaryKey;
+        }
+
     }
 
     public void addColum(ColumnObj... columnObjs){

@@ -79,7 +79,7 @@ public class ParseTools {
                         }
                         if(annotation instanceof PrimaryKey){
                             PrimaryKey primaryKey=(PrimaryKey)annotation;
-                            tableObj.setPrimaryKey(field.getName());
+                            tableObj.setPrimaryKey(getColumnNameFormFieldName(field.getName()));
                             primaryFlag=true;
                         }
                         if(annotation instanceof AutoIncrement){

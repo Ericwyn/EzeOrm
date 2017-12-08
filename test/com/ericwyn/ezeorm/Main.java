@@ -1,6 +1,7 @@
 package com.ericwyn.ezeorm;
 
 import com.ericwyn.ezeorm.entity.Admin;
+import com.ericwyn.ezeorm.entity.Product;
 import com.ericwyn.ezeorm.entity.User;
 
 import java.sql.ResultSet;
@@ -17,9 +18,15 @@ public class Main {
         EzeDbServer<User> userServer=new EzeDbServer.Builder<User>()
                 .setEntityClass(User.class)
                 .create();
+
+        EzeDbServer<Product> productServer=new EzeDbServer.Builder<Product>()
+                .setEntityClass(Product.class)
+                .create();
 //        EzeDbServer<Admin> adminServer=new EzeDbServer.Builder<Admin>()
 //                .setEntityClass(Admin.class)
 //                .create();
+
+
 
 //        //插入单条数据
 //        User user=new User();
@@ -28,6 +35,7 @@ public class Main {
 //        user.setTimeStamp(new Date());
 //        user.setSex("boy");
 //        user.setGood(false);
+
 //
 //        userServer.insert(user);
 //
