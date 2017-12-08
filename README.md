@@ -3,7 +3,7 @@
 
 EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象关系映射）框架。 关于ORM框架的简介请参考  [对象关系映射——维基百科](https://zh.wikipedia.org/wiki/%E5%AF%B9%E8%B1%A1%E5%85%B3%E7%B3%BB%E6%98%A0%E5%B0%84) 。帮助程序员更加简单的将自己的java 程序与数据库相连接。
 
-![ezeOrm](ezeOrm.png)
+![http://test-1252707398.costj.myqcloud.com/ezeOrm.png](ezeOrm.png)
 ## 数据库支持
  - 暂只支持 Mysql
 
@@ -35,6 +35,23 @@ EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象
  - 其他特性...
  
 # 使用示例
+### 引入EzeOrm
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
+ ------
+ 
+	<dependency>
+	    <groupId>com.github.User</groupId>
+	    <artifactId>Repo</artifactId>
+	    <version>Tag</version>
+	</dependency>
+### 引入JDBC驱动
 ### 创建Entity实体类
 
     import com.ericwyn.ezeorm.annotation.AutoIncrement;
