@@ -3,11 +3,8 @@ package com.ericwyn.ezeorm.dbTools.sqlbuilder;
 import com.ericwyn.ezeorm.expection.EzeExpection;
 import com.ericwyn.ezeorm.obj.ColumnObj;
 import com.ericwyn.ezeorm.obj.TableObj;
-import com.ericwyn.ezeorm.tool.EzeConfig;
 import com.ericwyn.ezeorm.tool.ParseTools;
 
-import java.io.File;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
@@ -49,7 +46,7 @@ public class MySQLCodeBuilder {
 
             res.append(",\n");
         }
-        res.append("PRIMARY KEY ( ").append(tableObj.getPrimaryKey()).append(" )\n");
+        res.append("PRIMARY KEY ( ").append(tableObj.getPrimaryKeyStr()).append(" )\n");
         res.append(")ENGINE=InnoDB DEFAULT CHARSET=utf8;");
         return res.toString();
     }
@@ -266,11 +263,12 @@ public class MySQLCodeBuilder {
         return "DROP TABLE `"+tableObj.getTableName()+"`;";
     }
 
+    //更新表方法
     public String update(TableObj tableObj, Object object){
         try {
             //通过反射获取主键的值
             String primaryKeyAndValue="";
-            String primaryKeyName = tableObj.getPrimaryKey();
+            String primaryKeyName = tableObj.getPrimaryKey().get(0);
             Method[] methods=object.getClass().getDeclaredMethods();
             if (primaryKeyName == null || primaryKeyName.equals("")){
                 throw new EzeExpection("该表不存在主键字段，无法使用该方法更新");
@@ -280,8 +278,9 @@ public class MySQLCodeBuilder {
                     if (method.getParameterCount() != 0) {
                         continue;
                     }
-                    if((methodNameTemp.contains("get") && methodNameTemp.contains(ParseTools.getFieldNameFormColumnName(primaryKeyName)))
-                            || (methodNameTemp.contains("is") && methodNameTemp.contains(ParseTools.getFieldNameFormColumnName(primaryKeyName)))){
+                    String fieldNameTemp=ParseTools.getFieldNameFormColumnName(primaryKeyName);
+                    if(methodNameTemp.equals("get"+fieldNameTemp)
+                            || methodNameTemp.equals("is"+fieldNameTemp)){
                         Object invoke = method.invoke(object);
                         if(invoke!=null){
                             List<ColumnObj> columnObjs=tableObj.getColumns();
@@ -331,7 +330,7 @@ public class MySQLCodeBuilder {
 
                 //遍历表中所有字段
                 for (ColumnObj columnObj:tableObj.getColumns()){
-                    if (columnObj.getName().equals(tableObj.getPrimaryKey())){
+                    if (columnObj.getName().equals(tableObj.getPrimaryKey().get(0))){
                         continue;
                     }
                     //遍历所有的方法，找到获取字段对应的属性的值的方法

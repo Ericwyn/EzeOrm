@@ -118,7 +118,7 @@ public class EzeDbServer<T> {
         try {
             DatabaseMetaData  m_DBMetaData= connection.getMetaData();
             ResultSet tableRet = m_DBMetaData.getTables(null, "%",table_name,new String[]{"TABLE"});
-        /*其中"%"就是表示*的意思，也就是任意所有的意思。其中m_TableName就是要获取的数据表的名字，如果想获取所有的表的名字，就可以使用"%"来作为参数了。*/
+            /*其中"%"就是表示*的意思，也就是任意所有的意思。其中m_TableName就是要获取的数据表的名字，如果想获取所有的表的名字，就可以使用"%"来作为参数了。*/
             TableObj tableObj=new TableObj();
             //3. 提取表的名字。
             while(tableRet.next()){

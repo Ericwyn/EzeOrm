@@ -10,7 +10,7 @@ import java.util.List;
 public class TableObj {
     private String tableName;
     List<ColumnObj> columns;
-    private String primaryKey;
+    private List<String> primaryKey=new ArrayList<>();
     public TableObj() {
 
     }
@@ -40,17 +40,28 @@ public class TableObj {
         this.columns = columns;
     }
 
-    public String getPrimaryKey() {
+    public String getPrimaryKeyStr() {
+        StringBuilder temp = new StringBuilder();
+        for (int i=0;i<primaryKey.size();i++){
+            if (i!=primaryKey.size()-1){
+                temp.append(primaryKey.get(i)).append(",");
+            }else{
+                temp.append(primaryKey.get(i));
+            }
+        }
+        return temp.toString();
+    }
+
+    public List<String> getPrimaryKey() {
         return primaryKey;
     }
 
-    public void setPrimaryKey(String primaryKey) {
-        if(this.primaryKey==null || this.primaryKey.equals("")){
-            this.primaryKey = primaryKey;
-        }else {
-            this.primaryKey=this.primaryKey+","+primaryKey;
-        }
+    public void setPrimaryKey(List<String> primaryKey) {
+        this.primaryKey = primaryKey;
+    }
 
+    public void setPrimaryKey(String primaryKey) {
+        this.primaryKey.add(primaryKey);
     }
 
     public void addColum(ColumnObj... columnObjs){
@@ -89,7 +100,7 @@ public class TableObj {
     @Override
     public int hashCode() {
         return this.getTableName().length()
-                +this.getPrimaryKey().length()
+                +this.getPrimaryKey().size()
                 +this.getColumns().size();
     }
 
