@@ -1,4 +1,6 @@
 # EzeOrm 简介
+[![](https://jitpack.io/v/Ericwyn/EzeOrm.svg)](https://jitpack.io/#Ericwyn/EzeOrm)
+
 EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象关系映射）框架。 关于ORM框架的简介请参考  [对象关系映射——维基百科](https://zh.wikipedia.org/wiki/%E5%AF%B9%E8%B1%A1%E5%85%B3%E7%B3%BB%E6%98%A0%E5%B0%84) 。帮助程序员更加简单的将自己的java 程序与数据库相连接。
 
 ![ezeOrm](ezeOrm.png)
