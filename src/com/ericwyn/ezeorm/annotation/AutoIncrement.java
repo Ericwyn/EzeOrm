@@ -6,10 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * 自动递增 注解，标记的属性其所代表的自断将会自增
  *
- * 自动递增 注解
- *
- * Created by Ericwyn on 17-11-20.
+ * @version 1.8
+ * @author Ericwyn
+ * @date 17-11-20
  */
 
 @Retention(RetentionPolicy.RUNTIME)

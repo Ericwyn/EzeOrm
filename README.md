@@ -28,30 +28,46 @@ EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象
     - 整个数据表删除
  - 数据的更新
  - Sql语句的调用
+ - 表结构更新
  
 ### 未实现
  - 外键
- - 数据表结构的修改
  - 其他特性...
  
 # 使用示例
 ### 引入EzeOrm
+ - 使用`maven`
 
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
-
- ------
+        <repositories>
+            <repository>
+                <idd>jitpack.io</idd>
+                <url>https://jitpack.io</url>
+            </repository>
+        </repositories>
+        
+        ......
+        
+        <dependencies>
+        
+            ......
+            
+            <dependency>
+                <groupId>com.github.Ericwyn</groupId>
+                <artifactId>EzeOrm</artifactId>
+                <version>test_0.0.6</version>
+            </dependency>
+            
+            ......
+            
+        </dependencies>
+	
+ - 使用`jar`包
  
-	<dependency>
-	    <groupId>com.github.User</groupId>
-	    <artifactId>Repo</artifactId>
-	    <version>Tag</version>
-	</dependency>
+    - [EzeOrm_releases](https://github.com/Ericwyn/EzeOrm/releases)	
+    
 ### 引入JDBC驱动
+ - 省略
+ 
 ### 创建Entity实体类
 
     import com.ericwyn.ezeorm.annotation.AutoIncrement;
@@ -73,7 +89,7 @@ EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象
         @PrimaryKey
         @AutoIncrement
         @Column(type = ColumnType.INT)
-        private Long id;
+        private Long idd;
     
         @Column(type = ColumnType.TEXT,notNull = true)
         private String name;
@@ -179,7 +195,7 @@ EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象
 ### 删除数据
 
     //删除单条数据
-    List<User> allGirl = userServer.findByAttributes("id=1");
+    List<User> allGirl = userServer.findByAttributes("idd=1");
     for (User userTemp:allGirl){
         userServer.delete(userTemp);
     }
@@ -260,9 +276,10 @@ EzeOrm 封装了一个`parseResultSet(ResultSet rs)`方法，能够帮助用户�
 整合ConfigGet工具进行配置文件的管理和读取, 关于该工具的更多信息可查看 [ConfigGet](https://github.com/Ericwyn/JavaUtil/blob/master/src/ConfigGet/README.md)
 
 
-    db_connect_url = jdbc:mysql://localhost:3306/db_name?characterEncoding=utf-8&useUnicode=true
-    db_account = root 
-    db_password = password 
+    db_connect_url = jdbc:mysql://localhost:3306/db_name?characterEncoding=utf-8&useUnicode=true    ; 数据库链接地址
+    db_account = root           ; 数据库连接账号
+    db_password = password      ; 数据库连接密码
+    db_update_model = backup    ; 表结构更新的方式，详情查看下文中关于表结构更新的说明
 
 
 # 主要架构设计备注
@@ -273,9 +290,12 @@ EzeOrm 封装了一个`parseResultSet(ResultSet rs)`方法，能够帮助用户�
 
 # 其他说明
 ### 关于表结构更新
-~~所有的表格更新都采用同一种方式，参考`spring.jpa.properties.hibernate.hbm2ddl.auto`属性，与`spring.jpa.properties.hibernate.hbm2ddl.auto`的 `update` 模式相同。第一次加载时根据Entity类会自动建立起表的结构（前提是先建立好数据库），以后加载时根据`Entity`类自动更新表结构，即使表结构改变了但表中的行仍然存在不会删除以前的行，表结构是不会在部署之初被马上建立起来的，是要等应用第一次运行起来后才会。后期可能会使用一个新的注解或者配置项，来达到像Hibernate 那样的表结构更新模式设置。~~
-注：发当实体类生变化的时候，会将数据表删除并且重建新的数据表
-
+ - 表结构更新模式通过配置文件当中的`db_update_model`项设定，当前EzeOrm可选择的设置为参数为`no`或者`backup`
+    - `db_update_model = no` 表示当表结构更新的时候不进行处理，而是抛出异常
+    - `db_update_model = backup` 表示当表结构更新的时候，会重命名原来的表，而后新建一个新的表
+ - 当前仅有一种表结构更新模式，即当表结构发生改变时候，会重命名旧的数据表（再其名称末尾加`x`，例如表`user`将会被重命名为`userx`），并且依据新的TableObj创建一个新的数据表。
+ - 所以若进行表结构更新的话，推荐复制建立一个表结构映射类，而后通过`EzeOrm`框架操作进行旧表数据的迁移 
+ 
 ### 关于Entity类中属性的命名
  - 非 Boolean 或非 boolean 类型的变量统一使用驼峰发命名，如`registerDate`
  - Boolean 或者 boolean 类型的变量无需在变量名头部加入 `is` ，例如不能是`isGood`，而应该直接是`good`

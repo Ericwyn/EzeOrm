@@ -6,9 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 列对象注解
+ * 数据库字段注解，标记的属性将成为数据表当中的字段
  *
- * Created by Ericwyn on 17-11-20.
+ * @version 1.8
+ * @author Ericwyn
+ * @date 17-11-20
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

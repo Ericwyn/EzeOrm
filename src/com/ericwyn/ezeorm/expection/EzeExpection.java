@@ -1,7 +1,11 @@
 package com.ericwyn.ezeorm.expection;
 
 /**
- * Created by Ericwyn on 17-11-20.
+ * 自定义的异常类
+ *
+ * @version 1.8
+ * @author Ericwyn
+ * @date 17-11-20
  */
 public class EzeExpection extends Exception{
     private String retCd; //异常对应的返回码

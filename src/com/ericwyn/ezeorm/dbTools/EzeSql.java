@@ -13,20 +13,28 @@ import java.sql.Statement;
 /**
  * sql 连接管理事宜
  *
- * Created by Ericwyn on 17-11-20.
+ * @version 1.8
+ * @author Ericwyn
+ * @date 17-11-20
  */
 public class EzeSql {
-    //共用的conn
+    //共用的conn，静态
     public static Connection conn;
-    private String url= EzeConfig.db_connect_url;
+    private static String url= EzeConfig.db_connect_url;
     //共用的statement
-    private Statement statement=null;
+    private static Statement statement=null;
 
 
     public EzeSql(){
 
     }
 
+    /**
+     * 初始化连接的方法，只能由EzeDbServer初始化时候，新建了EzeSql对象后调用，单整个程序运行过程中，该初始化只会被运行一次。<br>
+     *  1.加载JDBC Mysql 驱动<br>
+     *  2.初始化 公用 Connection<br>
+     *  3.通过Connection 获取 statement<br>
+     */
     public void initConnection() {
         if(conn==null){
             try {
@@ -34,7 +42,7 @@ public class EzeSql {
                 System.out.println("成功加载jdbc Mysql 驱动");
                 //初始化conniction
                 conn = DriverManager.getConnection(url,EzeConfig.db_account,EzeConfig.db_password);
-                this.statement=conn.createStatement();
+                statement=conn.createStatement();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             } catch (SQLException e2){
@@ -42,14 +50,16 @@ public class EzeSql {
             }
         }
     }
+
+    /**
+     * 得到数据库连接的url
+     * @return 返回数据库连接url
+     */
     public String getUrl() {
         return url;
     }
 
     public static Connection getConn() {
-        if(conn==null){
-            new EzeSql().initConnection();
-        }
         return conn;
     }
 
@@ -57,10 +67,10 @@ public class EzeSql {
         return statement;
     }
 
-    public void setStatement(Statement statement) {
-        this.statement = statement;
-    }
-
+    /**
+     * EzeOrm 最底层的 sql 运行方法，这个方法无返回值，用以执行无需数据返回的sql语句，例如数据的删除，数据的更新等
+     * @param sql 传入需要执行的sql语句
+     */
     public void runSQL(String sql) {
         try {
             if (statement==null){
@@ -72,6 +82,11 @@ public class EzeSql {
         }
     }
 
+    /**
+     * EzeOrm 最底层的 sql 运行方法，该方法返回一个ResultSet，用以执行查询一类的需要返回值的sql语句
+     * @param sql 传入需要执行的sql语句
+     * @return  返回处理结果
+     */
     public ResultSet runSQLForRes(String sql){
         try {
             if (statement==null){

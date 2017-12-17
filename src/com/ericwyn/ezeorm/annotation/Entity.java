@@ -6,9 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * 实体类注解，标记的类将成为Entity 实体类
  *
- * 实体类注解
- * Created by Ericwyn on 17-11-19.
+ * @version 1.8
+ * @author Ericwyn
+ * @date 17-11-20
  */
 @Retention(value = RetentionPolicy.RUNTIME)
 @Target(value = ElementType.TYPE)

@@ -17,17 +17,27 @@ import java.util.ArrayList;
 
 
 /**
- * Created by Ericwyn on 17-11-20.
+ * EzeOrm 的解析工具。拥有以下解析<br>
+ *     1.将一个包含注解的 Class 解析成一个TableObj<br>
+ *     2.将字段名解析成java的变量名（要求变量使用驼峰命名法）<br>
+ *     3.将java的变量名解析成数据库字段名（要求变量使用驼峰命名法）<br>
+ *
+ * @version 1.8
+ * @author Ericwyn
+ * @date 17-11-20
  */
 public class ParseTools {
 
     public static final SimpleDateFormat sdfForDATATIME=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     /**
-     * 解析注解的工具
+     * 通过反射解析包含注解的类成为一个TableObj对象
+     *
      * @param cla   映射对象
      * @return  返回一个 Table 对象
-     * @throws EzeExpection
+     * @throws EzeExpection 返回各种异常，如下
+     *      1.类并非使用Entity注解<br>
+     *      2.类没有公共的无参构造方法<br>
      */
     public static TableObj parseEntity(Class cla) throws EzeExpection{
         Class classA=cla;
@@ -106,7 +116,12 @@ public class ParseTools {
     }
 
 
-    //通过类的属性名获取数据库字段名的方法
+    /**
+     * 通过类属性名称获取其字段名称，要求使用驼峰命名法
+     *
+     * @param fieldName 属性名称，例如<code>userName</code>
+     * @return 返回的字段名称，如<code>user_name</code>
+     */
     public static String getColumnNameFormFieldName(String fieldName){
         String[] r = fieldName.split("(?=[A-Z])");
 
@@ -126,6 +141,12 @@ public class ParseTools {
     }
 
     //通过数据库字段名获取其在类中对应的属性名的方法
+    /**
+     * 通过其字段名称获取类属性名称，要求使用驼峰命名法
+     *
+     * @param columnName 数据库字段名称，例如<code>user_name</code>
+     * @return 返回的属性名称，如<code>userName</code>
+     */
     public static String getFieldNameFormColumnName(String columnName){
         String[] r2=columnName.split("_");
         if(r2.length==0){

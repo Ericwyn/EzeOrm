@@ -12,8 +12,11 @@ import java.util.Date;
 import java.util.HashMap;
 
 /**
- * 获取本地config文件的方法
- * Created by Ericwyn on 17-7-15.
+ * ConfigGet工具，用以获取本地config文件
+ *
+ * @version 1.8
+ * @author Ericwyn
+ * @date 17-07-15
  */
 public class ConfigGet {
     private static SimpleDateFormat sdf=new SimpleDateFormat("yy-MM-dd HH:mm:ss");

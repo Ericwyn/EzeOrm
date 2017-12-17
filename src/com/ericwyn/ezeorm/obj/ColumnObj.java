@@ -4,7 +4,14 @@ package com.ericwyn.ezeorm.obj;
 import java.util.List;
 
 /**
- * Created by Ericwyn on 17-11-20.
+ *
+ * 数据表对象映射类。<br>
+ * 包含了该字段的名称、类型、非空表示、自增标识<br>
+ *     EzeOrm认为主键标识是属于数据表的而非字段，所以该类中不包含主键标识
+ *
+ * @version 1.8
+ * @author Ericwyn
+ * @date 17-11-20
  */
 public class ColumnObj {
     private String name;
@@ -49,6 +56,16 @@ public class ColumnObj {
         this.autoIncrement = autoIncrement;
     }
 
+    /**
+     * 判断这个字段是否与另一个字段相同，判断步骤如下<br>
+     *     1.判断字段名称<br>
+     *     2.判断字段类型<br>
+     *     3.判断字段非空标识<br>
+     *     4.判断自增表示<br>
+     *
+     * @param obj 传入需要一个与之比较的列表对象
+     * @return 相等的话返回<code>true</code>
+     */
     @Override
     public boolean equals(Object obj) {
         if(((ColumnObj) obj).getName().equals(this.getName())){
@@ -70,41 +87,5 @@ public class ColumnObj {
         }
 
     }
-
-//    /**
-//     * 判断这个属性是不是在另一个表里也存在
-//     *
-//     * @param table
-//     * @return
-//     */
-//    public boolean inAnotherTable(TableObj table){
-//        List<ColumnObj> columns = table.getColumns();
-//        boolean resFlag=false;
-//        for (ColumnObj columnObj:table.getColumns()){
-//            if(this.getName().equals(columnObj.getName())){
-//                if(this.getType().equals(columnObj.getType())){
-//                    if(this.isNotNull()==columnObj.isNotNull()){
-//                        if(this.isAutoIncrement()==columnObj.isAutoIncrement()){
-//                            resFlag=true;
-//                            break;
-//                        }else {
-//                            System.out.println("列非空不同");
-//                            resFlag=false;
-//                        }
-//                    }else {
-//                        System.out.println("列自增加不同");
-//                        resFlag=false;
-//                    }
-//                }else {
-//                    System.out.println("列类型不同");
-//                    resFlag=false;
-//                }
-//            }else {
-//                System.out.println("列名字不同");
-//                resFlag=false;
-//            }
-//        }
-//        return resFlag;
-//    }
 
 }

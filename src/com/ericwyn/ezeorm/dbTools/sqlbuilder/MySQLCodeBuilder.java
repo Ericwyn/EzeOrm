@@ -12,20 +12,24 @@ import java.util.List;
 
 /**
  *
- * sql语句构造器
+ * Mysql语句构造器
  *
- * q:全部使用StringBuilder 来构建的话，StringBuilder 为单线程设计，是否会存在多线程下的问题？
+ * 全部使用StringBuilder来构建，
+ * StringBuilder 为单线程设计，
+ * 多线程下可能会不安全。
  *
- *
- * Created by Ericwyn on 17-11-20.
+ * @version 1.8
+ * @author Ericwyn
+ * @date 17-11-20
  */
 public class MySQLCodeBuilder {
 
 
     /**
-     * 建表
-     * @param tableObj
-     * @return
+     * 生成建表语句
+     *
+     * @param tableObj 传入一个TableObj 对象，表明需要生成的
+     * @return 返回创建数据表的语句
      */
     public String createTable(TableObj tableObj){
         StringBuilder res=new StringBuilder();
@@ -46,19 +50,28 @@ public class MySQLCodeBuilder {
 
             res.append(",\n");
         }
-        res.append("PRIMARY KEY ( ").append(tableObj.getPrimaryKeyStr()).append(" )\n");
+        res.append("PRIMARY KEY ( ").append(tableObj.getPrimaryKeyName()).append(" )\n");
         res.append(")ENGINE=InnoDB DEFAULT CHARSET=utf8;");
         return res.toString();
     }
 
     /**
-     * 生成语句类似
+     * 生成数据库插入语句
+     *
+     * <code>
      * INSERT INTO user (`name`, `age`, `sex`, `time_stamp`)
      *      VALUES
      *      ('testName', 11, 'girl', "2017-11-22 19:09:01");
-     * @param tableObj
-     * @param object
-     * @return
+     * </code>
+     *
+     * @param tableObj 传入Tableobj对象，然后
+     * @param object 传入 Entity 实体类对象，需要与TableObj对应。
+     * @return 返回插入语句，类似于
+     * <code>
+     * INSERT INTO user (`name`, `age`, `sex`, `time_stamp`)
+     *      VALUES
+     *      ('testName', 11, 'girl', "2017-11-22 19:09:01");
+     * </code>
      */
     public String insert(TableObj tableObj,Object object){
         try {
@@ -106,36 +119,6 @@ public class MySQLCodeBuilder {
                             }
 
                         }
-//                        if((methodNameTemp.contains("get") && methodNameTemp.contains(columnObj.getName().replaceAll("_","")))
-//                                || (methodNameTemp.contains("is") && methodNameTemp.contains(columnObj.getName().replaceAll("_","")))){
-//                            Object invoke = method.invoke(object);
-////                            if(invoke == null){
-////                                //如果是自增的话，那么值可以为空，不用管
-////                                if(!columnObj.isAutoIncrement()){
-////                                    //如果
-////                                    if(columnObj.isNotNull()){
-////                                        throw new EzeExpection(columnObj.getName()+"字段不允许为空值");
-////                                    }else {
-////                                        countTemp++;
-////                                    }
-////                                }else {
-////                                    countTemp++;
-////                                }
-////                            }else {
-////                                if(countTemp==tableObj.getColumns().size()-1){
-////                                    filedBuilder.append(columnObj.getName()+" ");
-////                                    valueBuilder.append(invoke.toString()+" ");
-////                                }else {
-////                                    filedBuilder.append(columnObj.getName()+", ");
-////                                    valueBuilder.append(invoke.toString()+", ");
-////                                }
-////                                countTemp++;
-////                            }
-//                            if(invoke!=null){
-//                                filedBuilder.append(columnObj.getName()+", ");
-//                                valueBuilder.append(invoke.toString()+", ");
-//                            }
-//                        }
                     } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     }
@@ -144,7 +127,6 @@ public class MySQLCodeBuilder {
             stringBuilder.append(filedBuilder.toString().substring(0,filedBuilder.length()-2)).append(")\n")
                     .append("VALUES\n")
                     .append(valueBuilder.toString().substring(0,valueBuilder.length()-2)).append(");");
-//            System.out.println(stringBuilder.toString());
             return stringBuilder.toString();
         }catch (Exception e){
             e.printStackTrace();
@@ -152,12 +134,25 @@ public class MySQLCodeBuilder {
         }
     }
 
-
+    /**
+     * 返回查询所有数据的sql语句
+     *
+     * @param tableObj 传入TableObj对象代表需要查询的数据表
+     * @return 返回sql语句，类似于
+     * <code>select * from `user` ;</code>
+     */
     public String findAll(TableObj tableObj){
         return "select * from `"+tableObj.getTableName()+"`;";
     }
 
-    //按参数进行查询
+    /**
+     * 返回条件查询 sql 语句
+     *
+     * @param tableObj 传入TableObj 代表需要查询的数据表
+     * @param attributes 传入sql 语句中的WHERE 后的条件限定语句
+     * @return 返回sql语句 ，类似于
+     * <code>select * from `user` WHERE age=19;</code>
+     */
     public String findByAttributes(TableObj tableObj,String... attributes){
         String temp="";
         if(attributes.length==1){
@@ -175,7 +170,23 @@ public class MySQLCodeBuilder {
         return res;
     }
 
-    //删除一行数据
+    /**
+     * 返回删除数据库的 sql 语句<br>
+     *     该方法构建的语句会包含对数据表中所有字段的限制语句，
+     *     也就是object必须和数据表中的某一行完全对应，
+     *     所有的属性都必须与哪一行的字段相符合。
+     *     所以该方法的传入对象一般都应该是通过查询方法寻找到的对象。
+     *
+     * @param tableObj 传入TableObj 代表需要查询的数据表
+     * @param object    传入需要删除的对象，通过TableObj对象来构建反射来获取对象属性并且放入到sql语句的构造之中
+     *                  该对象最好是通过find方法查找的到的对象。
+     * @return 返回sql语句，类似于
+     *      <code>
+     *          DELETE FROM `user`
+     *              WHERE `name`='girlName2' AND `age`=15 AND `sex`='boy'
+     *              AND `time_stamp`='2017-12-17 12:02:00' AND `good`=0 ;
+     *      </code>
+     */
     public String delete(TableObj tableObj,Object object){
         try {
             StringBuilder stringBuilder=new StringBuilder();
@@ -237,7 +248,14 @@ public class MySQLCodeBuilder {
             return null;
         }
     }
-    //删除表中所有数据
+
+    /**
+     * 构建 sql 语句，删除表中所有数据
+     *
+     * @param tableObj  传入TableObj对象，
+     * @return 返回 sql 语句，类似于
+     *  <code>DELETE FROM `user`</code>
+     */
     public String deleteAll(TableObj tableObj){
         return "DELETE FROM `"+tableObj.getTableName()+"`";
     }
@@ -258,12 +276,36 @@ public class MySQLCodeBuilder {
         String res="DELETE from `"+tableObj.getTableName()+"` WHERE "+temp+" ;";
         return res;
     }
+
+
     //删表（下一步怕就是跑路了吧（雾...）
+    /**
+     * 构建 sql 语句，删除数据表
+     *
+     * @param tableObj  传入TableObj对象，
+     * @return 返回 sql 语句，类似于
+     *  <code>DROP TABLE `user`</code>
+     */
     public String dropTable(TableObj tableObj){
         return "DROP TABLE `"+tableObj.getTableName()+"`;";
     }
 
-    //更新表方法
+    /**
+     * 构建 sql 语句，更新数据表中的一行数据
+     *
+     * 该方法先通过tableObj对象，寻找到表的主键（在存在多个主键的情况下只会获取第一个主键）。
+     * 而后通过该主键来将数据表某一列的数据全部更新成object当中的数据。
+     *
+     * @param tableObj  传入TableObj对象
+     * @param object 需要更新的具体object对象，理论上来讲属性只需要包含一个主键就可以了。
+     * @return 返回 sql 语句，类似于
+     *  <code>
+     *      UPDATE `user`
+     *      SET `name`='girlName2' , `age`=15 , `sex`='男' ,
+     *          `time_stamp`='2017-12-17 13:20:06' , `good`=false
+     *      WHERE `id`=2;
+     *  </code>
+     */
     public String update(TableObj tableObj, Object object){
         try {
             //通过反射获取主键的值
@@ -394,5 +436,15 @@ public class MySQLCodeBuilder {
         }
     }
 
+    /**
+     * 生成更新表名称的方法
+     * @param obj 需要改名的数据表的映射对象
+     * @param newTableName  新的数据表名称
+     * @return  返回构建的sql 语句,类似于
+     *      <code>RENAME TABLE `user` TO `new_user`;</code>
+     */
+    public String renameTable(TableObj obj,String newTableName){
+        return "RENAME TABLE `"+obj.getTableName()+"` TO `"+newTableName+"`;";
+    }
 
 }
