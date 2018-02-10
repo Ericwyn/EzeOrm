@@ -280,6 +280,7 @@ EzeOrm 封装了一个`parseResultSet(ResultSet rs)`方法，能够帮助用户�
     db_account = root           ; 数据库连接账号
     db_password = password      ; 数据库连接密码
     db_update_model = backup    ; 表结构更新的方式，详情查看下文中关于表结构更新的说明
+    show_sql = true ; 显示 sql 代码，方便debug
 
 
 # 主要架构设计备注
@@ -316,3 +317,15 @@ EzeOrm 封装了一个`parseResultSet(ResultSet rs)`方法，能够帮助用户�
 
             [mysql]
             default-character-set=utf8
+
+### 关于 sql 注入的预防
+ - 自于 EzeOrm 是直接用框架生成`sql`语句而后用`Statement` 的 `execute()`方法来完成数据库操作的，所以当增删改查过程中使用 `ByAttributes` 的时候可能存在被sql注入的危险（`ByAttributes`方法的参数直接对应了`sql`语句当中的 WHERE 限定语句），所以推荐使用的时候，在 Server 层增加对服务方法的参数修正，例如将参数的空格全部去除。
+
+        public User getUserByMail(String mail) {
+            List<User> users = server.findByAttributes("mail = '" + mail.replaceAll(" ","")+"'");
+            if(users!=null && users.size()==1){
+                return users.get(0);
+            }else {
+                return null;
+            }
+        }

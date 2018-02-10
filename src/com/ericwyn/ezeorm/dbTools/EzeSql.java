@@ -9,6 +9,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * sql 连接管理事宜
@@ -23,7 +25,7 @@ public class EzeSql {
     private static String url= EzeConfig.db_connect_url;
     //共用的statement
     private static Statement statement=null;
-
+    private static SimpleDateFormat sdf = new SimpleDateFormat("MMdd_hhmmss");
 
     public EzeSql(){
 
@@ -72,6 +74,9 @@ public class EzeSql {
      * @param sql 传入需要执行的sql语句
      */
     public void runSQL(String sql) {
+        if(EzeConfig.db_show_sql){
+            System.out.println("[DEBUG_EzeOrm]"+sdf.format(new Date())+" : "+sql);
+        }
         try {
             if (statement==null){
                 statement=conn.createStatement();
@@ -88,6 +93,9 @@ public class EzeSql {
      * @return  返回处理结果
      */
     public ResultSet runSQLForRes(String sql){
+        if(EzeConfig.db_show_sql){
+            System.out.println("[DEBUG_EzeOrm] "+sdf.format(new Date())+" : "+sql);
+        }
         try {
             if (statement==null){
                 statement=conn.createStatement();

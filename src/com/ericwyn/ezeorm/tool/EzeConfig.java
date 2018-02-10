@@ -13,5 +13,10 @@ public class EzeConfig {
     public static final String db_account=conf.getValue("root","db_account");
     public static final String db_password=conf.getValue("password","db_password");
     public static final String db_update_model=conf.getValue("never_set","db_update_model");
+    public static final boolean db_show_sql=isShowSql();
 
+    private static boolean isShowSql (){
+        String temp = conf.getValue("false","show_sql");
+        return temp.equals("true");
+    }
 }
