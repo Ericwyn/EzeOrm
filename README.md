@@ -54,7 +54,7 @@ EzeOrm 是一个使用java 编写的简易ORM（Object Relational Mapping 对象
             <dependency>
                 <groupId>com.github.Ericwyn</groupId>
                 <artifactId>EzeOrm</artifactId>
-                <version>test_0.0.6</version>
+                <version>V1.1.0</version>
             </dependency>
             
             ......
