@@ -1,0 +1,12 @@
+apply plugin: 'java'
+jar {
+    baseName = 'EzeOrm'
+    version = '1.0.1'
+}
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
+        }
+    }
+}
