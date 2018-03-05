@@ -23,8 +23,6 @@ public class EzeSql {
     //共用的conn，静态
     public static Connection conn;
     private static String url= EzeConfig.db_connect_url;
-    //共用的statement
-    private static Statement statement=null;
     private static SimpleDateFormat sdf = new SimpleDateFormat("MMdd_hhmmss");
 
     public EzeSql(){
@@ -44,7 +42,6 @@ public class EzeSql {
                 System.out.println("成功加载jdbc Mysql 驱动");
                 //初始化conniction
                 conn = DriverManager.getConnection(url,EzeConfig.db_account,EzeConfig.db_password);
-                statement=conn.createStatement();
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             } catch (SQLException e2){
@@ -65,10 +62,6 @@ public class EzeSql {
         return conn;
     }
 
-    public Statement getStatement() {
-        return statement;
-    }
-
     /**
      * EzeOrm 最底层的 sql 运行方法，这个方法无返回值，用以执行无需数据返回的sql语句，例如数据的删除，数据的更新等
      * @param sql 传入需要执行的sql语句
@@ -78,9 +71,7 @@ public class EzeSql {
             System.out.println("[DEBUG_EzeOrm]"+sdf.format(new Date())+" : "+sql);
         }
         try {
-            if (statement==null){
-                statement=conn.createStatement();
-            }
+            Statement statement=conn.createStatement();
             statement.execute(sql);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -97,9 +88,7 @@ public class EzeSql {
             System.out.println("[DEBUG_EzeOrm] "+sdf.format(new Date())+" : "+sql);
         }
         try {
-            if (statement==null){
-                statement=conn.createStatement();
-            }
+            Statement statement=conn.createStatement();
             return statement.executeQuery(sql);
         } catch (SQLException e) {
             e.printStackTrace();
