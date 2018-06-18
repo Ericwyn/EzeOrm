@@ -19,7 +19,7 @@ public class User {
     @PrimaryKey
     @AutoIncrement
     @Column(type = ColumnType.INT)
-    private Long idd;
+    private Long id;
 
     @Column(type = ColumnType.TEXT,notNull = true)
     private String name;
@@ -41,11 +41,11 @@ public class User {
     }
 
     public Long getIdd() {
-        return idd;
+        return id;
     }
 
     public void setIdd(Long idd) {
-        this.idd = idd;
+        this.id = idd;
     }
 
     public String getName() {

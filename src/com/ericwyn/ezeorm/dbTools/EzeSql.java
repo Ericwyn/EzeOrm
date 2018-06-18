@@ -67,9 +67,7 @@ public class EzeSql {
      * @param sql 传入需要执行的sql语句
      */
     public void runSQL(String sql) {
-        if(EzeConfig.db_show_sql){
-            System.out.println("[DEBUG_EzeOrm]"+sdf.format(new Date())+" : "+sql);
-        }
+        log(sql);
         try {
             Statement statement=conn.createStatement();
             statement.execute(sql);
@@ -96,5 +94,10 @@ public class EzeSql {
         }
     }
 
+    public void log(String msg){
+        if(EzeConfig.db_show_sql){
+            System.out.println("[DEBUG_EzeOrm]"+sdf.format(new Date())+" : "+msg);
+        }
+    }
 
 }

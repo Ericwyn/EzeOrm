@@ -1,8 +1,11 @@
 package com.ericwyn.ezeorm;
 
+import com.ericwyn.ezeorm.entity.Admin;
 import com.ericwyn.ezeorm.entity.Product;
 import com.ericwyn.ezeorm.entity.User;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -44,44 +47,44 @@ public class Main {
 //            user1.setSex("男");
 //            userServer.update(user1);
 //        }
-//        插入多条数据
+
+//        //插入多条数据
 //        ArrayList<User> userList=new ArrayList<>();
 //        for (int i=0;i<10;i++){
 //            User listUserTemp=new User();
 //            listUserTemp.setName("userNameTemp"+i);
 //            listUserTemp.setAge(i);
 //            listUserTemp.setTimeStamp(new Date());
-//            listUserTemp.setSex("girl");
+//            listUserTemp.setSex(i%2==0?"girl":"boy");
 //            listUserTemp.setGood(false);
 //            userList.add(listUserTemp);
 //        }
-//
 //        userServer.insertList(userList);
-//
+
 //        Admin admin=new Admin();
 //        admin.setAccount("test");
 //        admin.setPw("testPw");
-//
 //        adminServer.insert(admin);
-//
-//        //查询所有数据
-//        List<User> allUser = userServer.findAll();
-//        for (User userTemp:allUser){
-//            System.out.println(userTemp.getIdd()+" "+userTemp.getName()+" "+userTemp.getSex()+" "
-//                    +userTemp.getAge()+" "+userTemp.getTimeStamp()+" "+userTemp.isGood());
-//        }
+
+        //查询所有数据
+        List<User> allUser = userServer.findAll().limit(0,5).commitForRes();
+        for (User userTemp:allUser){
+            System.out.println(userTemp.getIdd()+" "+userTemp.getName()+" "+userTemp.getSex()+" "
+                    +userTemp.getAge()+" "+userTemp.getTimeStamp()+" "+userTemp.isGood());
+        }
+
 //
 //        List<Admin> allAdmin = adminServer.findAll();
 //        for (Admin adminTemp:allAdmin){
-//            System.out.println(adminTemp.getIdd()+" "+adminTemp.getAccount()+" "+adminTemp.getPw());
+//            System.out.println(adminTemp.getId()+" "+adminTemp.getAccount()+" "+adminTemp.getPw());
 //        }
 
-        //自定义条件查询
-        List<User> allGirl = userServer.findAll();
-        for (User userTemp:allGirl){
-            System.out.println(userTemp.getIdd()+" "+userTemp.getName()+" "+userTemp.getSex()+" "
-                    +userTemp.getAge()+" "+userTemp.getTimeStamp());
-        }
+//        //自定义条件查询
+//        List<User> allGirl = userServer.findAll().commitForRes();
+//        for (User userTemp:allGirl){
+//            System.out.println(userTemp.getIdd()+" "+userTemp.getName()+" "+userTemp.getSex()+" "
+//                    +userTemp.getAge()+" "+userTemp.getTimeStamp());
+//        }
 
 //        //多条件查询
 //        List<User> allGirl2=userServer.findByAttributes("sex = \"girl\"","age > 11");

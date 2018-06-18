@@ -83,6 +83,63 @@ public class EzeDbServer<T> {
     }
 
     /**
+     * session 类来支持更多的特性,而不仅仅只是增删改查,例如
+     *
+     *      limit
+     *      orderBy
+     *
+     */
+    public class EzeDbSession{
+        private String sqlQuery;
+        private boolean descFlag = false;
+        private boolean ascFlag = false;
+        private String limitFlag = "";
+        private String orderFlag = "";
+
+        private EzeDbSession(String sqlQuery){
+            this.sqlQuery = sqlQuery;
+        }
+
+        public void commit(){
+            commit(false);
+        }
+
+        public List<T> commitForRes(){
+            return commit(true);
+        }
+
+        private List<T> commit(boolean getResultSet){
+            if (orderFlag!=null){
+                sqlQuery = sqlQuery.replace(";","")+orderFlag+";";
+            }
+            if (limitFlag!=null){
+                sqlQuery = sqlQuery.replace(";","")+limitFlag+";";
+            }
+            if (getResultSet){
+                return parseResultSet(ezeSql.runSQLForRes(sqlQuery));
+            }else {
+                ezeSql.runSQL(sqlQuery);
+                return null;
+            }
+        }
+        public EzeDbSession limit(int start,int end){
+            limitFlag = " limit "+start+","+end+" ";
+            return this;
+        }
+
+        public EzeDbSession orderBy(String columnName){
+            orderFlag = " order by "+ columnName + " ";
+            return this;
+        }
+
+        public EzeDbSession orderBy(String columnName, String keyWay){
+            orderFlag = " order "+ columnName + " "+keyWay;
+            return this;
+        }
+
+    }
+
+    /**
      * 私有构造方法，只能由<code>Builder</code> 的<code>create</code> 方法调用。调用时候会完成初始化，完成如下工作<br>
      *     1.根据泛型<code>T</code>生成一个<code>TableObj</code>对象<br>
      *     2.初始化 Sql 语句构建器和<code>EzeSql</code><br>
@@ -198,7 +255,7 @@ public class EzeDbServer<T> {
      */
     private void createTable(TableObj tableObj){
         ezeSql.runSQL(coderBuilder.createTable(tableObj));
-        System.out.println("成功创建"+tableObj.getTableName()+"表");
+        ezeSql.log("成功创建"+tableObj.getTableName()+"表");
     }
 
     /**
@@ -299,9 +356,8 @@ public class EzeDbServer<T> {
      * 查找数据库中所有的数据
      * @return  返回一个List，包含解析过的所有数据
      */
-    public List<T> findAll(){
-        ResultSet resultSet = ezeSql.runSQLForRes(coderBuilder.findAll(table));
-        return parseResultSet(resultSet);
+    public EzeDbSession findAll(){
+        return new EzeDbSession(coderBuilder.findAll(table));
     }
 
     /**
@@ -309,9 +365,8 @@ public class EzeDbServer<T> {
      * @param attributes 条件语句,就是 SELECT 语句后面 WHERE 条件句
      * @return  返回一个List，包含解析过的所有数据
      */
-    public List<T> findByAttributes(String... attributes){
-        ResultSet resultSet = ezeSql.runSQLForRes(coderBuilder.findByAttributes(table,attributes));
-        return parseResultSet(resultSet);
+    public EzeDbSession findByAttributes(String... attributes){
+        return new EzeDbSession(coderBuilder.findByAttributes(table,attributes));
     }
 
     /**
